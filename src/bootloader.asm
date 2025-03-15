@@ -7,9 +7,9 @@ start:
     mov ds, ax
     mov es, ax
 	
-	mov ax, 0x000
-	mov ss, ax
-	mov sp, 0x7C00
+   	mov ax, 0x000
+	   mov ss, ax
+   	mov sp, 0x7C00
 
     mov ah, 0x02
     mov al, 2
