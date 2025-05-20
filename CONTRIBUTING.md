@@ -18,7 +18,7 @@ There are many ways to contribute to Lumin:
 
 ## Principles of development
 
-* **Follow the code style:** Lumin has its own code style.  Please follow it when writing the code.  The details will be described in a separate file. [CODE_STYLE.md](https://github.com/Tosa5656/Lumin/CODE_STYLE.md) (in development).
+* **Follow the code style:** Lumin has its own code style.  Please follow it when writing the code.  The details will be described in a separate file. [CODE_STYLE.md](https://github.com/Tosa5656/Lumin/blob/master/CODE_STYLE.md) (in development).
 * **Write tests:** Each new feature and bug fix should be accompanied by tests.
 * **Be concise and clear:** Your code should be easy to read and understandable for other developers.
 * **Break big changes into small ones:** Break down complex tasks into smaller ones to make them easier to understand and verify.
@@ -38,7 +38,7 @@ There are many ways to contribute to Lumin:
 
 ## Code of Conduct
 
-We expect all members of the Lumin community to behave respectfully and constructively.  Insults, discrimination, trolling and other forms of unacceptable behavior are not allowed.  Detailed rules of conduct will be set out in the file [CODE_OF_CONDUCT.md](https://github.com/Tosa5656/Lumin/CODE_OF_CONDUCT.md) (in development).
+We expect all members of the Lumin community to behave respectfully and constructively.  Insults, discrimination, trolling and other forms of unacceptable behavior are not allowed.  Detailed rules of conduct will be set out in the file [CODE_OF_CONDUCT.md](https://github.com/Tosa5656/Lumin/blob/master/CODE_OF_CONDUCT.md) (in development).
 
 ## Gratitude
 

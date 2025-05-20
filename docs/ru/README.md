@@ -1,8 +1,8 @@
 # ✨ Lumin: Твой Язык Программирования Будущего ✨
 [![GitHub stars](https://img.shields.io/github/stars/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
 [![GitHub forks](https://img.shields.io/github/forks/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
-[![GitHub issues](https://img.shields.io/github/issues/Tosa5656/Lumin)](https://github.com/Tosa5656 Lumin/issues)
-[![License](https://img.shields.io/github/license/Tosa5656/Lumin)](./LICENSE)
+[![GitHub issues](https://img.shields.io/github/issues/Tosa5656/Lumin)](https://github.com/Tosa5656/Lumin/issues)
+[![License](https://img.shields.io/github/license/Tosa5656/Lumin)](https://github.com/Tosa5656/Lumin/blob/master/LICENSE.md)
 
 **Lumin** - это новый, разрабатываемый язык программирования, созданный с акцентом на простоту, читаемость и производительность.  Он спроектирован так, чтобы быть универсальным инструментом для широкого круга задач, от небольших скриптов до крупных, сложных приложений. Lumin стремится предложить разработчикам интуитивно понятный синтаксис и мощные возможности, обеспечивая при этом безопасность и предотвращая распространенные ошибки.
 
@@ -194,10 +194,10 @@
 *   Механизмы синхронизации: мьютексы (mutex), семафоры (semaphore), каналы (channel).
 
 ## 🤝 Вклад
-Приветствуются любые вклады в развитие Lumin!  Если вы хотите внести свой вклад, пожалуйста,ознакомьтесь с нашими [правилами внесения вклада](https://github.com/Tosa5656/Lumin/docs/ru/CONTRIBUTING.md).
+Приветствуются любые вклады в развитие Lumin!  Если вы хотите внести свой вклад, пожалуйста,ознакомьтесь с нашими [правилами внесения вклада](https://github.com/Tosa5656/Lumin/blob/master/docs/ru/CONTRIBUTING.md).
 
 ## 📄 Лицензия
-Lumin распространяется под лицензией [GPL-3.0](https://github.com/Tosa5656/Lumin/LICENSE).
+Lumin распространяется под лицензией [GPL-3.0](https://github.com/Tosa5656/Lumin/blob/master/LICENSE).
 
 ## ✉️ Контакты
 *   [Ваш email]

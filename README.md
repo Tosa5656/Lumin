@@ -2,9 +2,9 @@
 [![GitHub stars](https://img.shields.io/github/stars/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
 [![GitHub forks](https://img.shields.io/github/forks/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
 [![GitHub issues](https://img.shields.io/github/issues/Tosa5656/Lumin)](https://github.com/Tosa5656/Lumin/issues)
-[![License](https://img.shields.io/github/license/Tosa5656/Lumin)](./LICENSE)
+[![License](https://img.shields.io/github/license/Tosa5656/Lumin)](https://github.com/Tosa5656/Lumin/blob/master/LICENSE.md)
 
-[Russian readme](https://github.com/Tosa5656/Lumin/docs/ru/README.md)
+[Russian readme](https://github.com/Tosa5656/Lumin/blob/master/docs/ru/README.md)
 
 **Lumin** is a new, developing programming language created with an emphasis on simplicity, readability, and performance. It is designed to be a versatile tool for a wide range of tasks, from small scripts to large, complex applications. Lumin aims to offer developers an intuitive syntax and powerful features, while ensuring safety and preventing common errors.
 
@@ -197,10 +197,10 @@ When Lumin becomes available for use, instructions for running your first progra
 *   Synchronization mechanisms: mutexes, semaphores, channels.
 
 ## 🤝 Contributing
-Contributions to the development of Lumin are welcome! If you want to contribute, please review our [contributing guidelines](https://github.com/Tosa5656/Lumin/CONTRIBUTING.md).
+Contributions to the development of Lumin are welcome! If you want to contribute, please review our [contributing guidelines](https://github.com/Tosa5656/Lumin/blob/master/CONTRIBUTING.md).
 
 ## 📄 License
-Lumin is distributed under the [GPL-3.0](LICENSE) license.
+Lumin is distributed under the [GPL-3.0](https://github.com/Tosa5656/Lumin/blob/master/LICENSE.md) license.
 
 ## ✉️ Contacts
 *   eea85670@gmail.com
