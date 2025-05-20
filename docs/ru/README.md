@@ -1,4 +1,4 @@
-# ✨ Lumin: Твой Язык Программирования Будущего ✨
+# Lumin: Твой Язык Программирования Будущего
 [![GitHub stars](https://img.shields.io/github/stars/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
 [![GitHub forks](https://img.shields.io/github/forks/Tosa5656/Lumin?style=social)](https://github.com/Tosa5656/Lumin)
 [![GitHub issues](https://img.shields.io/github/issues/Tosa5656/Lumin)](https://github.com/Tosa5656/Lumin/issues)
