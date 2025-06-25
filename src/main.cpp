@@ -14,6 +14,9 @@ using namespace glm;
 Object* object = nullptr;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
+GLFWwindow* g_window = nullptr;
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
 
 void Awake()
 {
@@ -38,14 +41,14 @@ void Start()
     };
 
     float colors[] = {
-        0.5f, 0.33f, 0.27f, // 0
-        0.5f, 0.33f, 0.27f, // 1
-        0.5f, 0.33f, 0.27f, // 2
-        0.5f, 0.33f, 0.27f, // 3
-        0.5f, 0.33f, 0.27f, // 4
-        0.5f, 0.33f, 0.27f, // 5
-        0.5f, 0.33f, 0.27f, // 6
-        0.5f, 0.33f, 0.27f  // 7
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f,
+        0.5f, 0.33f, 0.27f
     };
 
     unsigned int indices[] = {
@@ -59,8 +62,24 @@ void Start()
     object = new Object("Cube", vertices, 24, colors, 24, indices, 36, objectSP);
 }
 
+void ProcessInput(GLFWwindow* window)
+{
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
 void Update()
 {
+    float currentFrame = glfwGetTime();
+    deltaTime = currentFrame - lastFrame;
+    lastFrame = currentFrame;
+    ProcessInput(g_window);
     if (object) object->Draw();
 }
 
@@ -96,8 +115,9 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     #endif
 
     Window window(800, 600, "Lumin", Awake, Start);
-    glfwSetInputMode(window.GetGLFWwindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window.GetGLFWwindow(), mouse_callback);
+    g_window = window.GetGLFWwindow();
+    glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetCursorPosCallback(g_window, mouse_callback);
     window.run(Update);
     if (object) delete object;
     return 0;

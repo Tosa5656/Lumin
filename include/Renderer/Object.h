@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Renderer/Renderer.h"
 #include "Shaders/Shaders.h"
+#include "Renderer/Texture.h"
 
 class ObjectShaderProgram
 {
