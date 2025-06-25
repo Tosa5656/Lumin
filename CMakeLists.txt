@@ -17,7 +17,11 @@ add_executable(${PROJECT_NAME} ${SRC_DIR}/main.cpp
 								${SRC_DIR}/Renderer/Renderer.cpp
                                 ${SRC_DIR}/Renderer/Object.cpp
                                 ${SRC_DIR}/Shaders/Shaders.cpp
-                                ${SRC_DIR}/Renderer/Camera.cpp)
+                                ${SRC_DIR}/Renderer/Camera.cpp
+                                ${SRC_DIR}/Renderer/Texture.cpp
+                                ${SRC_DIR}/Renderer/Light.cpp
+
+                                ${SRC_DIR}/stb_image_impl.cpp)
 
 option(RELEASE_MODE "Build with console (OFF = Win32 GUI mode)" ON)
 
@@ -29,6 +33,19 @@ target_link_libraries(${PROJECT_NAME} glad)
 
 add_subdirectory(dependencies/glm)
 target_link_libraries(${PROJECT_NAME} glm)
+
+set(IMGUI_SRC
+    dependencies/imgui/imgui.cpp
+    dependencies/imgui/imgui_demo.cpp
+    dependencies/imgui/imgui_draw.cpp
+    dependencies/imgui/imgui_tables.cpp
+    dependencies/imgui/imgui_widgets.cpp
+    dependencies/imgui/backends/imgui_impl_glfw.cpp
+    dependencies/imgui/backends/imgui_impl_opengl3.cpp
+)
+
+target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SRC})
+target_include_directories(${PROJECT_NAME} PRIVATE dependencies/imgui dependencies/imgui/backends)
 
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

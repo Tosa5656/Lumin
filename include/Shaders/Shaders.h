@@ -8,6 +8,7 @@
 
 #include <glad/glad.h>
 
+// Shader abstraction for Lumin Engine
 class Shader
 {
 public:

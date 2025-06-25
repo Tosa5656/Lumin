@@ -1,7 +1,6 @@
 #include "Window\Window.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
 
+// Implementation of Window management for Lumin Engine
 Window::Window(int width, int height, const std::string& title, const std::function<void()>& onAwake, const std::function<void()>& onStart)
 {
     this->width = width;

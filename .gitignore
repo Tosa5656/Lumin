@@ -1,3 +1,14 @@
 .vs
-bin
-build
+bin/
+build/
+*.obj
+*.exe
+*.log
+*.user
+*.sln
+*.vcxproj
+*.pdb
+*.cache
+*.DS_Store
+.vscode/
+.idea/

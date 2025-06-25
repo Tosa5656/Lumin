@@ -1,5 +1,6 @@
 #include "Shaders/Shaders.h"
 
+// Implementation of Shader abstraction for Lumin Engine
 Shader::Shader(const std::string& filePath, int type)
 {
     m_Source = m_ReadShaderSource(filePath);

@@ -1,7 +1,6 @@
 #include "Renderer/Texture.h"
-#define STB_IMAGE_IMPLEMENTATION
-#include "../../include/stb_image.h"
 
+// Implementation of Texture loader/manager for Lumin Engine
 Texture::Texture(const std::string& path) {
     glGenTextures(1, &m_ID);
     glBindTexture(GL_TEXTURE_2D, m_ID);

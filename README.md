@@ -1,4 +1,4 @@
-# Lumin
+# Lumin Engine
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 [![Build](https://img.shields.io/github/actions/workflow/status/Tosa5656/Lumin/cmake.yml?branch=main)](https://github.com/Tosa5656/Lumin/actions)

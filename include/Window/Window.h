@@ -2,16 +2,21 @@
 
 #include <iostream>
 #include <functional>
-#include <GLAD/glad.h>
-#include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
+
+#include <GLAD/glad.h>
+#include <GLFW/glfw3.h>
+
 #include "Shaders/Shaders.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
+#include "stb_image.h"
+
+// Window management for Lumin Engine
 class Window
 {
 public:
