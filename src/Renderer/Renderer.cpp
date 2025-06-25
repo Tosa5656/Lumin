@@ -9,17 +9,8 @@ glm::mat4 MVP = glm::mat4(1.0f);
 
 void UpdateMVP()
 {
-    static float orbitAngle = 0.0f;
-    orbitAngle += 0.01f; // скорость вращения
-    float radius = 3.0f;
-    float camX = sin(orbitAngle) * radius;
-    float camZ = cos(orbitAngle) * radius;
-    glm::vec3 cameraPos = glm::vec3(camX, 0.0f, camZ);
-    glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f); // центр куба
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-
     Model = glm::mat4(1.0f);
-    View = glm::lookAt(cameraPos, target, up);
+    View = camera.GetViewMatrix();
     MVP = Projection * View * Model;
 }
 
