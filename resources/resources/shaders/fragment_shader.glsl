@@ -1,4 +1,4 @@
-// Fragment shader for Lumin Engine. Handles multiple directional lights and diffuse lighting.
+// Fragment shader for Lumin Engine. Handles single directional sunlight and texture mapping.
 #version 330 core
 in vec3 ourColor;
 in vec2 TexCoord;
@@ -8,7 +8,7 @@ out vec4 FragColor;
 
 uniform sampler2D texture1;
 uniform bool useTexture;
-#define MAX_LIGHTS 4
+uniform vec3 materialColor;
 
 struct Light {
     vec3 direction;
@@ -16,19 +16,21 @@ struct Light {
     float intensity;
     bool enabled;
 };
-uniform Light lights[MAX_LIGHTS];
+uniform Light sunLight;
 
 void main()
 {
     vec3 normal = normalize(Normal);
     vec3 lighting = vec3(0.0);
-    int dummy = 0;
-    for (int i = 0; i < MAX_LIGHTS; ++i) {
-        if (lights[i].enabled) {
-            float diff = max(dot(normal, -lights[i].direction), 0.0);
-            lighting += lights[i].color * lights[i].intensity * diff;
-        }
-        dummy += lights[i].enabled ? 1 : 0;
+    if (sunLight.enabled) {
+        float diff = max(dot(normal, -sunLight.direction), 0.0);
+        lighting += sunLight.color * sunLight.intensity * diff;
     }
-    FragColor = vec4(lighting, 1.0);
+    vec3 baseColor;
+    if (useTexture) {
+        baseColor = materialColor * texture(texture1, TexCoord).rgb;
+    } else {
+        baseColor = materialColor;
+    }
+    FragColor = vec4(baseColor * lighting, 1.0);
 }

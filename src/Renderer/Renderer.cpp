@@ -1,7 +1,10 @@
-// Implementation of Renderer module for Lumin Engine
+// Implementation of Renderer module for Lumin Engine (single sunlight)
 
 #include "Renderer/Renderer.h"
 #include <string>
+
+namespace Lumin {
+namespace Renderer {
 
 Camera camera;
 Light light;
@@ -18,9 +21,9 @@ void UpdateMVP()
     MVP = Projection * View * Model;
 }
 
-ShaderProgram CreateShaderProgram(Shader vertexShader, Shader fragmentShader)
+Lumin::Shaders::ShaderProgram CreateShaderProgram(Lumin::Shaders::Shader vertexShader, Lumin::Shaders::Shader fragmentShader)
 {
-    ShaderProgram shaderProgram = ShaderProgram(vertexShader, fragmentShader);
+    Lumin::Shaders::ShaderProgram shaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
     shaderProgram.LinkShaders();
     return shaderProgram;
 }
@@ -48,7 +51,7 @@ void InitBuffers(unsigned int VBO[2], unsigned int* VAO)
     glGenBuffers(2, VBO);
 }
 
-void DrawObject(ShaderProgram shaderProgram, unsigned int VAO, int indexCount)
+void DrawObject(Lumin::Shaders::ShaderProgram shaderProgram, unsigned int VAO, int indexCount)
 {
     UpdateMVP();
     glUseProgram(shaderProgram.getId());
@@ -59,7 +62,7 @@ void DrawObject(ShaderProgram shaderProgram, unsigned int VAO, int indexCount)
     glBindVertexArray(0);
 }
 
-void DrawPoint(const glm::vec3& pos, const glm::vec3& color, ShaderProgram& shader) {
+void DrawPoint(const glm::vec3& pos, const glm::vec3& color, Lumin::Shaders::ShaderProgram& shader) {
     UpdateMVP();
     float vertices[] = { pos.x, pos.y, pos.z };
     float colors[] = { color.r, color.g, color.b };
@@ -87,7 +90,7 @@ void DrawPoint(const glm::vec3& pos, const glm::vec3& color, ShaderProgram& shad
     glDeleteBuffers(2, VBO);
 }
 
-void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, ShaderProgram& shader) {
+void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, Lumin::Shaders::ShaderProgram& shader) {
     UpdateMVP();
     float vertices[] = { from.x, from.y, from.z, to.x, to.y, to.z };
     float colors[] = { color.r, color.g, color.b, color.r, color.g, color.b };
@@ -114,20 +117,20 @@ void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color
     glDeleteBuffers(2, VBO);
 }
 
-void SetLightsUniforms(ShaderProgram& shader) {
-    for (int i = 0; i < MAX_LIGHTS; ++i) {
-        std::string idx = std::to_string(i);
-        GLint dirLoc = glGetUniformLocation(shader.getId(), ("lights[" + idx + "].direction").c_str());
-        GLint colorLoc = glGetUniformLocation(shader.getId(), ("lights[" + idx + "].color").c_str());
-        GLint intLoc = glGetUniformLocation(shader.getId(), ("lights[" + idx + "].intensity").c_str());
-        GLint enLoc = glGetUniformLocation(shader.getId(), ("lights[" + idx + "].enabled").c_str());
-        if (dirLoc == -1) printf("[SetLightsUniforms] dirLoc[%d] not found\n", i);
-        if (colorLoc == -1) printf("[SetLightsUniforms] colorLoc[%d] not found\n", i);
-        if (intLoc == -1) printf("[SetLightsUniforms] intLoc[%d] not found\n", i);
-        if (enLoc == -1) printf("[SetLightsUniforms] enLoc[%d] not found\n", i);
-        glUniform3fv(dirLoc, 1, &lights[i].direction[0]);
-        glUniform3fv(colorLoc, 1, &lights[i].color[0]);
-        glUniform1f(intLoc, lights[i].intensity);
-        glUniform1i(enLoc, lights[i].enabled ? 1 : 0);
-    }
+void SetLightsUniforms(Lumin::Shaders::ShaderProgram& shader) {
+    GLint dirLoc = glGetUniformLocation(shader.getId(), "sunLight.direction");
+    GLint colorLoc = glGetUniformLocation(shader.getId(), "sunLight.color");
+    GLint intLoc = glGetUniformLocation(shader.getId(), "sunLight.intensity");
+    GLint enLoc = glGetUniformLocation(shader.getId(), "sunLight.enabled");
+    if (dirLoc == -1) printf("[SetLightsUniforms] dirLoc not found\n");
+    if (colorLoc == -1) printf("[SetLightsUniforms] colorLoc not found\n");
+    if (intLoc == -1) printf("[SetLightsUniforms] intLoc not found\n");
+    if (enLoc == -1) printf("[SetLightsUniforms] enLoc not found\n");
+    glUniform3fv(dirLoc, 1, &sunLight.direction[0]);
+    glUniform3fv(colorLoc, 1, &sunLight.color[0]);
+    glUniform1f(intLoc, sunLight.intensity);
+    glUniform1i(enLoc, sunLight.enabled ? 1 : 0);
 }
+
+} // namespace Renderer
+} // namespace Lumin

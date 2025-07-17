@@ -1,6 +1,8 @@
 #include "Renderer/Texture.h"
 
-// Implementation of Texture loader/manager for Lumin Engine
+namespace Lumin {
+namespace Renderer {
+
 Texture::Texture(const std::string& path) {
     glGenTextures(1, &m_ID);
     glBindTexture(GL_TEXTURE_2D, m_ID);
@@ -27,4 +29,7 @@ Texture::~Texture() {
 void Texture::Bind(unsigned int unit) const {
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, m_ID);
-} 
+}
+
+} // namespace Renderer
+} // namespace Lumin 

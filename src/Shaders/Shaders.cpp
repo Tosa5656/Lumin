@@ -1,6 +1,8 @@
 #include "Shaders/Shaders.h"
 
-// Implementation of Shader abstraction for Lumin Engine
+namespace Lumin {
+namespace Shaders {
+
 Shader::Shader(const std::string& filePath, int type)
 {
     m_Source = m_ReadShaderSource(filePath);
@@ -60,3 +62,6 @@ void ShaderProgram::LinkShaders()
         std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
     }
 }
+
+} // namespace Shaders
+} // namespace Lumin

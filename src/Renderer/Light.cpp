@@ -1,24 +1,18 @@
-// Implementation of Light system for Lumin Engine
+// Implementation of Light system for Lumin Engine (single sunlight)
 
 #include "Renderer/Light.h"
 #include "Renderer/Renderer.h"
 
-Light lights[MAX_LIGHTS];
+namespace Lumin {
+namespace Renderer {
 
-void InitDefaultLights() {
-    for (int i = 0; i < MAX_LIGHTS; ++i) {
-        lights[i] = Light();
-        lights[i].enabled = true;
-    }
-    lights[0].enabled = true;
-    lights[0].direction = glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f));
-    lights[0].color = glm::vec3(1.0f);
-    lights[0].intensity = 1.0f;
-    lights[0].type = LightType::Directional;
-}
+Light sunLight;
 
 Light::Light()
-    : direction(glm::normalize(glm::vec3(-0.2f, -1.0f, -0.3f))), color(glm::vec3(1.0f)), intensity(1.0f), enabled(true), type(LightType::Directional) {}
+    : position(0.0f), rotation(0.0f), color(glm::vec3(1.0f)), intensity(1.0f), enabled(true), type(LightType::Directional)
+{
+    UpdateDirectionFromRotation();
+}
 
 void Light::SetLight(bool en) {
     enabled = en;
@@ -28,8 +22,23 @@ bool Light::IsEnabled() const {
     return enabled;
 }
 
-void Light::DrawDebug(ShaderProgram& shader) const {
+void Light::UpdateDirectionFromRotation() {
+    // Yaw (y), Pitch (x), Roll (z) — как у камеры
+    float yaw = glm::radians(rotation.y);
+    float pitch = glm::radians(rotation.x);
+    // По умолчанию свет направлен вдоль -Z
+    glm::vec3 dir;
+    dir.x = cos(pitch) * sin(yaw);
+    dir.y = sin(pitch);
+    dir.z = -cos(pitch) * cos(yaw);
+    direction = glm::normalize(dir);
+}
+
+void Light::DrawDebug(Lumin::Shaders::ShaderProgram& shader) const {
     glm::vec3 lightPos = -direction * 2.0f;
     DrawPoint(lightPos, color, shader);
     DrawLine(lightPos, glm::vec3(0.0f), color, shader);
-} 
+}
+
+} // namespace Renderer
+} // namespace Lumin 

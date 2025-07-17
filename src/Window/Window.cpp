@@ -1,6 +1,8 @@
-#include "Window\Window.h"
+#include "Window/Window.h"
 
-// Implementation of Window management for Lumin Engine
+namespace Lumin {
+namespace Windowing {
+
 Window::Window(int width, int height, const std::string& title, const std::function<void()>& onAwake, const std::function<void()>& onStart)
 {
     this->width = width;
@@ -70,3 +72,6 @@ Window::~Window()
     if (window)
         glfwDestroyWindow(window);
 }
+
+} // namespace Windowing
+} // namespace Lumin

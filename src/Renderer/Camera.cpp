@@ -2,6 +2,9 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/constants.hpp>
 
+namespace Lumin {
+namespace Renderer {
+
 Camera::Camera(glm::vec3 position, float yaw, float pitch)
     : Position(position), Yaw(yaw), Pitch(pitch), WorldUp(0.0f, 1.0f, 0.0f)
 {
@@ -55,3 +58,6 @@ void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
     if (direction == RIGHT)
         Position += Right * velocity;
 }
+
+} // namespace Renderer
+} // namespace Lumin

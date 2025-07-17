@@ -10,11 +10,14 @@ out vec2 TexCoord;
 out vec3 Normal;
 
 uniform mat4 MVP;
+uniform mat4 Model;
 
 void main()
 {
-    gl_Position = MVP * vec4(aPos, 1.0);
+    gl_Position = MVP * Model * vec4(aPos, 1.0);
     ourColor = aColor;
     TexCoord = aTexCoord;
-    Normal = aNormal;
+    // Трансформация нормали
+    mat3 normalMatrix = transpose(inverse(mat3(Model)));
+    Normal = normalize(normalMatrix * aNormal);
 }

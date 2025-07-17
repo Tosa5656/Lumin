@@ -20,49 +20,43 @@
 #include <glad/glad.h>
 #endif
 
-using namespace glm;
+using namespace Lumin::Renderer;
+using namespace Lumin::Shaders;
+using namespace Lumin::Windowing;
 
-Object* object = nullptr;
+Lumin::Renderer::Object* object = nullptr;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 GLFWwindow* g_window = nullptr;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-Texture* texture = nullptr;
+Lumin::Renderer::Texture* texture = nullptr;
 bool uiMode = true; // true — UI (мышь видима), false — игра (мышь скрыта)
-ObjectShaderProgram objectSP;
-ShaderProgram debugShaderProgram;
-ShaderProgram debugColorShaderProgram;
+Lumin::Renderer::ObjectShaderProgram objectSP;
+Lumin::Shaders::ShaderProgram debugShaderProgram;
+Lumin::Shaders::ShaderProgram debugColorShaderProgram;
 
-void Awake()
-{
+int anim_time = 0;
 
-}
+void Awake() {}
 
 void Start()
 {
-    InitDefaultLights();
-    // Инициализация всех lights для релиза и debug
-    for (int i = 0; i < MAX_LIGHTS; ++i) {
-        lights[i].enabled = true;
-        float angle = glm::radians(360.0f * i / MAX_LIGHTS);
-        lights[i].direction = glm::normalize(glm::vec3(cos(angle), -1.0f, sin(angle)));
-        switch (i) {
-            case 0: lights[i].color = glm::vec3(1,0,0); break;
-            case 1: lights[i].color = glm::vec3(0,1,0); break;
-            case 2: lights[i].color = glm::vec3(0,0,1); break;
-            case 3: lights[i].color = glm::vec3(1,1,0); break;
-        }
-        lights[i].intensity = 1.0f;
-    }
-    Shader dbgVert("resources/shaders/debug_color_vertex.glsl", GL_VERTEX_SHADER);
-    Shader dbgFrag("resources/shaders/debug_color_fragment.glsl", GL_FRAGMENT_SHADER);
-    debugColorShaderProgram = ShaderProgram(dbgVert, dbgFrag);
+    // Яркое солнце: белый цвет, интенсивность 3.0, светит под углом сверху сбоку (визуально "дальше")
+    sunLight.enabled = true;
+    sunLight.direction = glm::normalize(glm::vec3(0.5f, -1.0f, 0.5f)); // под углом сверху сбоку
+    sunLight.color = glm::vec3(1.0f, 1.0f, 1.0f); // белый свет
+    sunLight.intensity = 2.0f;
+    sunLight.type = LightType::Directional;
+
+    Lumin::Shaders::Shader dbgVert("resources/shaders/debug_color_vertex.glsl", GL_VERTEX_SHADER);
+    Lumin::Shaders::Shader dbgFrag("resources/shaders/debug_color_fragment.glsl", GL_FRAGMENT_SHADER);
+    debugColorShaderProgram = Lumin::Shaders::ShaderProgram(dbgVert, dbgFrag);
     debugColorShaderProgram.LinkShaders();
-    Shader vertexShader("resources/shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
-    Shader fragmentShader("resources/shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
-    objectSP = ObjectShaderProgram(vertexShader, fragmentShader);
-    debugShaderProgram = ShaderProgram(vertexShader, fragmentShader);
+    Lumin::Shaders::Shader vertexShader("resources/shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
+    Lumin::Shaders::Shader fragmentShader("resources/shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
+    objectSP = Lumin::Renderer::ObjectShaderProgram(vertexShader, fragmentShader);
+    debugShaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram.LinkShaders();
 
     float vertices[] = {
@@ -98,12 +92,12 @@ void Start()
         -0.5f, -0.5f, -0.5f
     };
     float colors[] = {
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,
-        0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f,  0.5f, 0.32f, 0.55f
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f,  1.0f, 1.0f, 1.0f
     };
     float uvs[] = {
         // Front
@@ -141,29 +135,14 @@ void Start()
        16,17,18,18,19,16,         // top
        20,21,22,22,23,20          // bottom
     };
-    texture = new Texture("resources/textures/texture.png");
-    object = new Object("Cube", vertices, 72, colors, 72, indices, 36, uvs, 48, normals, 72, objectSP);
+    texture = new Lumin::Renderer::Texture("resources/textures/texture.png");
+    object = Lumin::Renderer::Object::FromOBJ("resources/model.obj", objectSP);
     //object->SetTexture(texture);
-}
-
-void ShowLightSettingsImGui(Light* lights, int count) {
-    ImGui::SetWindowSize("Lights Settings", ImVec2(400, 0), ImGuiCond_Once);
-    ImGui::Begin("Lights Settings");
-    for (int i = 0; i < count; ++i) {
-        ImGui::PushID(i);
-        if (ImGui::CollapsingHeader((std::string("Light ") + std::to_string(i)).c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Checkbox("Enabled", &lights[i].enabled);
-            ImGui::SliderFloat3("Direction", &lights[i].direction[0], -1.0f, 1.0f);
-            ImGui::ColorEdit3("Color", &lights[i].color[0]);
-            ImGui::SliderFloat("Intensity", &lights[i].intensity, 0.0f, 5.0f);
-        }
-        ImGui::PopID();
-    }
-    ImGui::End();
 }
 
 void ProcessInput(GLFWwindow* window)
 {
+    using namespace Lumin::Renderer;
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -172,10 +151,26 @@ void ProcessInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
+        object->SetPosition(glm::vec3(5.0f, 0.0f, 0.0f));
+
+    glm::vec3 rot = sunLight.GetRotation();
+    float lightSpeed = 60.0f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        rot.y += lightSpeed;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        rot.y -= lightSpeed;
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        rot.x -= lightSpeed;
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        rot.x += lightSpeed;
+
+    sunLight.SetRotation(rot);
 }
 
 void Update()
 {
+    using namespace Lumin::Renderer;
     float currentFrame = glfwGetTime();
     deltaTime = currentFrame - lastFrame;
     lastFrame = currentFrame;
@@ -204,10 +199,6 @@ void Update()
     ImGui::Begin("Mode Info");
     ImGui::Text("Current mode: %s", uiMode ? "UI (ESC to switch)" : "Game (ESC to switch)");
     ImGui::End();
-    #ifdef RELEASE_BUILD
-    #else
-        ShowLightSettingsImGui(lights, MAX_LIGHTS);
-    #endif
 
     if (!uiMode) {
         ProcessInput(g_window);
@@ -230,20 +221,22 @@ void Update()
         firstMouse = true;
     }
 
+    anim_time += 1;
+    object->SetRotation(glm::vec3(anim_time, 0, 0));
     if (object) object->Draw();
 
-    #ifndef RELEASE_BUILD
-        for (int i = 0; i < MAX_LIGHTS; ++i) {
-            if (lights[i].enabled)
-                lights[i].DrawDebug(debugColorShaderProgram);
-        }
-    #endif
+#ifndef RELEASE_BUILD
+    // Debug: рисуем только один источник света (солнце)
+    if (sunLight.enabled)
+        sunLight.DrawDebug(debugColorShaderProgram);
+#endif
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    using namespace Lumin::Renderer;
     glViewport(0, 0, width, height);
     Projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }
@@ -264,7 +257,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         std::cout << "Lumin started in debug mode." << std::endl;
     #endif
 
-    Window window(800, 600, "Lumin", Awake, Start);
+    Lumin::Windowing::Window window(800, 600, "Lumin", Awake, Start);
     g_window = window.GetGLFWwindow();
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
