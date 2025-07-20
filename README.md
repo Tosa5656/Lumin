@@ -21,7 +21,7 @@
 - [GLAD](https://glad.dav1d.de/) — загрузка OpenGL-функций
 - [GLM](https://github.com/g-truc/glm) — математика для 3D
 - [stb_image](https://github.com/nothings/stb) — загрузка изображений
-- **CMake** — сборка проекта
+- [CMake](https://github.com/Kitware/CMake) — сборка проекта
 
 ## Планы
 - Перемещение и вращение камеры с помощью клавиатуры и мыши ✅
