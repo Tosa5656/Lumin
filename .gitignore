@@ -1,6 +1,6 @@
 .vs
-bin/
-build/
+*/bin
+*/build/
 *.obj
 *.exe
 *.log
