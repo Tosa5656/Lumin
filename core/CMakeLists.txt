@@ -15,7 +15,8 @@ include_directories(include/)
 set(SOURCES
     src/Lumin/Core/Renderer/Camera.cpp
     src/Lumin/Core/Renderer/Light.cpp
-    src/Lumin/Core/Renderer/Object.cpp
+    src/Lumin/Core/Object/Object.cpp
+    src/Lumin/Core/Object/ObjectsManager.cpp
     src/Lumin/Core/Renderer/Renderer.cpp
     src/Lumin/Core/Renderer/Texture.cpp
     src/Lumin/Core/Shaders/Shaders.cpp

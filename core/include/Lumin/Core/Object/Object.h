@@ -8,17 +8,20 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "Lumin/Core/Object/ObjectsManager.h"
 #include "Lumin/Core/Renderer/Renderer.h"
 #include "Lumin/Core/Shaders/Shaders.h"
 #include "Lumin/Core/Renderer/Texture.h"
 #include <map>
+
+using namespace Lumin::Renderer;
 
 namespace Lumin {
 namespace Shaders {
     class Shader;
     class ShaderProgram;
 }
-namespace Renderer {
+namespace Object {
 
 /**
  * @class ObjectShaderProgram

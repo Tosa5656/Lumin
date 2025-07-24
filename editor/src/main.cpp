@@ -1,11 +1,11 @@
 #include <iostream>
 #include <Lumin.h>
+#include <Lumin/ScriptAPI/ScriptAPI.h>
 
 using namespace Lumin::Renderer;
 using namespace Lumin::Shaders;
 using namespace Lumin::Windowing;
 
-Lumin::Renderer::Object* object = nullptr;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 GLFWwindow* g_window = nullptr;
@@ -13,7 +13,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 Lumin::Renderer::Texture* texture = nullptr;
 bool uiMode = true; // true — UI (мышь видима), false — игра (мышь скрыта)
-Lumin::Renderer::ObjectShaderProgram objectSP;
+Lumin::Object::ObjectShaderProgram objectSP;
 Lumin::Shaders::ShaderProgram debugShaderProgram;
 Lumin::Shaders::ShaderProgram debugColorShaderProgram;
 
@@ -34,12 +34,12 @@ void Start()
     debugColorShaderProgram.LinkShaders();
     Lumin::Shaders::Shader vertexShader("resources/shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
     Lumin::Shaders::Shader fragmentShader("resources/shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
-    objectSP = Lumin::Renderer::ObjectShaderProgram(vertexShader, fragmentShader);
+    objectSP = Lumin::Object::ObjectShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram.LinkShaders();
 
     texture = new Lumin::Renderer::Texture("resources/textures/texture.png");
-    object = Lumin::Renderer::Object::FromOBJ("resources/model.obj", objectSP);
+    GameObject object = GameObject("Object", "resources/model.obj", &objectSP);
     //object = Lumin::Renderer::Object::FromOBJ("resources/model.obj", objectSP);
     //object->SetTexture(texture);
 }
@@ -55,8 +55,6 @@ void ProcessInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-        object->SetPosition(glm::vec3(5.0f, 0.0f, 0.0f));
 
     glm::vec3 rot = sunLight.GetRotation();
     float lightSpeed = 60.0f * deltaTime;
@@ -125,7 +123,8 @@ void Update()
         firstMouse = true;
     }
 
-    if (object) object->Draw();
+    ObjectsManager::DrawObjects();
+
 
 #ifndef RELEASE_BUILD
     // Debug: рисуем только один источник света (солнце)
@@ -173,7 +172,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    if (object) delete object;
-    if (texture) delete texture;
     return 0;
 }

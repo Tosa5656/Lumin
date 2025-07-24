@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "Lumin/Core/Renderer/Object.h"
+#include "Lumin/Core/Object/Object.h"
 #include "Lumin/Core/Shaders/Shaders.h"
 #include "Lumin/Core/Renderer/Camera.h"
 #include "Lumin/Core/Renderer/Light.h"

@@ -1,4 +1,4 @@
-#include "Lumin/Core/Renderer/Object.h"
+#include "Lumin/Core/Object/Object.h"
 #include "Lumin/Core/Renderer/Renderer.h"
 #include <cstring>
 #include <fstream>
@@ -12,7 +12,7 @@
 //namespace fs = std::filesystem;
 
 namespace Lumin {
-namespace Renderer {
+namespace Object {
 
 Object::Object(const std::string& name, const float* vertices, size_t vertexCount, const float* colors, size_t colorCount, const unsigned int* indices, size_t indexCount, const float* uvs, size_t uvCount, const float* normals, size_t normalCount, ObjectShaderProgram objectShaderProgram)
     : name(name), vertexCount(vertexCount), colorCount(colorCount), indexCount(indexCount), uvCount(uvCount), normalCount(normalCount), objectShaderProgram(objectShaderProgram), texture(nullptr)
@@ -28,6 +28,7 @@ Object::Object(const std::string& name, const float* vertices, size_t vertexCoun
     this->normals = new float[normalCount];
     std::memcpy(this->normals, normals, normalCount * sizeof(float));
     Init();
+    ObjectsManager::AddObject(this);
 }
 
 Object::~Object()
@@ -79,8 +80,8 @@ void Object::Init()
     glBindVertexArray(0);
 }
 
-static std::map<std::string, Lumin::Renderer::OBJMaterial> LoadMTL(const std::string& mtlPath, const std::string& baseDir) {
-    std::map<std::string, Lumin::Renderer::OBJMaterial> materials;
+static std::map<std::string, Lumin::Object::OBJMaterial> LoadMTL(const std::string& mtlPath, const std::string& baseDir) {
+    std::map<std::string, Lumin::Object::OBJMaterial> materials;
     std::ifstream file(mtlPath);
     if (!file.is_open()) return materials;
     std::string line, current;
@@ -90,7 +91,7 @@ static std::map<std::string, Lumin::Renderer::OBJMaterial> LoadMTL(const std::st
         iss >> prefix;
         if (prefix == "newmtl") {
             iss >> current;
-            materials[current] = Lumin::Renderer::OBJMaterial();
+            materials[current] = Lumin::Object::OBJMaterial();
             materials[current].name = current;
         } else if (prefix == "Kd" && !current.empty()) {
             float r, g, b; iss >> r >> g >> b;
@@ -122,8 +123,8 @@ Object* Object::FromOBJ(const std::string& path, ObjectShaderProgram objectShade
     struct Index { int v, vt, vn; };
     std::vector<Index> indices;
     std::vector<int> faceMaterialIndices;
-    std::vector<Lumin::Renderer::OBJMaterial> materialsVec;
-    std::map<std::string, Lumin::Renderer::OBJMaterial> materialsMap;
+    std::vector<Lumin::Object::OBJMaterial> materialsVec;
+    std::map<std::string, Lumin::Object::OBJMaterial> materialsMap;
     std::string currentMtl;
     std::string baseDir = GetBaseDir(path);
     std::string line;
