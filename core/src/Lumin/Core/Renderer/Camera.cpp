@@ -5,20 +5,24 @@
 namespace Lumin {
 namespace Renderer {
 
-Camera::Camera(glm::vec3 position, glm::vec3 lookAt, glm::vec3 up)
+RendererCamera::RendererCamera(glm::vec3 position, glm::vec3 lookAt, glm::vec3 up)
     : Position(position), LookAtTarget(lookAt), Up(up)
 {
 }
 
-void Camera::SetPosition(const glm::vec3& position) {
+void RendererCamera::SetPosition(const glm::vec3& position) {
     Position = position;
 }
 
-void Camera::SetLookAt(const glm::vec3& target) {
+void RendererCamera::SetLookAt(const glm::vec3& target) {
     LookAtTarget = target;
 }
 
-glm::mat4 Camera::GetViewMatrix() const {
+void RendererCamera::SetUp(const glm::vec3& up) {
+    Up = up;
+}
+
+glm::mat4 RendererCamera::GetViewMatrix() const {
     return glm::lookAt(Position, LookAtTarget, Up);
 }
 

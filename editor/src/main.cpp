@@ -1,12 +1,13 @@
 #include <iostream>
 #include <Lumin.h>
+#include "Lumin/ScriptAPI/ScriptAPI.h"
 
 using namespace Lumin::Object;
 using namespace Lumin::Shaders;
 using namespace Lumin::Windowing;
 using namespace Lumin::Renderer;
 
-Lumin::Object::Object* object = nullptr;
+Camera mainCamera = Camera();
 GLFWwindow* g_window = nullptr;
 Lumin::Renderer::Texture* texture = nullptr;
 Lumin::Object::ObjectShaderProgram objectSP;
@@ -23,14 +24,14 @@ bool firstMouse = true;
 void Awake() {}
 
 void UpdateCameraLookAtFromAngles() {
-    glm::vec3 pos = camera.GetPosition();
+    glm::vec3 pos = glm::vec3(mainCamera.transform.GetPosition().x, mainCamera.transform.GetPosition().y, mainCamera.transform.GetPosition().z);
     float yawRad = glm::radians(cameraYaw);
     float pitchRad = glm::radians(cameraPitch);
     glm::vec3 front;
     front.x = cos(pitchRad) * cos(yawRad);
     front.y = sin(pitchRad);
     front.z = cos(pitchRad) * sin(yawRad);
-    camera.SetLookAt(pos + glm::normalize(front) * cameraDistance);
+    mainCamera.transform.SetLookAt(Vector3(pos.x + glm::normalize(front).x * cameraDistance, pos.y + glm::normalize(front).y * cameraDistance, pos.z + glm::normalize(front).z * cameraDistance));
 }
 
 void Start()
@@ -50,13 +51,15 @@ void Start()
     debugShaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram.LinkShaders();
     texture = new Lumin::Renderer::Texture("resources/textures/texture.png");
-    object = Lumin::Object::Object::FromOBJ("resources/model.obj", objectSP);
+    GameObject object = GameObject("test", "resources/model.obj", &objectSP);
     //object->SetTexture(texture);
+
+
     // FPS camera init
     glm::vec3 pos = glm::vec3(0.0f, 2.0f, 5.0f);
     glm::vec3 look = glm::vec3(0.0f, 0.0f, 0.0f);
-    camera.SetPosition(pos);
-    camera.SetLookAt(look);
+    mainCamera.transform.SetPosition(Vector3(pos.x, pos.y, pos.z));
+    mainCamera.transform.SetLookAt(Vector3(look.x, look.y, look.z));
     glm::vec3 front = glm::normalize(look - pos);
     cameraYaw = glm::degrees(atan2(front.z, front.x));
     cameraPitch = glm::degrees(asin(front.y));
@@ -68,11 +71,11 @@ void Update()
     // --- FPS Camera movement ---
     float moveSpeed = 0.1f;
     float lightSpeed = 1.0f; // скорость вращения света
-    glm::vec3 pos = camera.GetPosition();
-    glm::vec3 look = camera.GetLookAtTarget();
+    glm::vec3 pos = glm::vec3(mainCamera.transform.GetPosition().x, mainCamera.transform.GetPosition().y, mainCamera.transform.GetPosition().z);
+    glm::vec3 look = glm::vec3(mainCamera.transform.GetLookAt().x, mainCamera.transform.GetLookAt().y, mainCamera.transform.GetLookAt().z);
     glm::vec3 front = glm::normalize(look - pos);
-    glm::vec3 right = glm::normalize(glm::cross(front, camera.GetUp()));
-    glm::vec3 up = camera.GetUp();
+    glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z)));
+    glm::vec3 up = glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z);
     // Движение позиции камеры (WASD/QE)
     if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS)
         pos += front * moveSpeed;
@@ -86,7 +89,7 @@ void Update()
         pos += up * moveSpeed;
     if (glfwGetKey(g_window, GLFW_KEY_E) == GLFW_PRESS)
         pos -= up * moveSpeed;
-    camera.SetPosition(pos);
+    mainCamera.transform.SetPosition(Vector3(pos.x, pos.y, pos.z));
     // --- Управление направлением солнца (стрелки) ---
     glm::vec3 rot = sunLight.GetRotation();
     if (glfwGetKey(g_window, GLFW_KEY_UP) == GLFW_PRESS)
@@ -125,13 +128,13 @@ void Update()
     ImGui::Begin("Camera & Light Info");
     ImGui::Text("Camera position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
     ImGui::Text("Camera yaw: %.2f, pitch: %.2f", cameraYaw, cameraPitch);
-    glm::vec3 lookat = camera.GetLookAtTarget();
+    glm::vec3 lookat = glm::vec3(mainCamera.transform.GetLookAt().x, mainCamera.transform.GetLookAt().y, mainCamera.transform.GetLookAt().z);
     ImGui::Text("Camera look at: (%.2f, %.2f, %.2f)", lookat.x, lookat.y, lookat.z);
     glm::vec3 lightDir = sunLight.direction;
     ImGui::Text("Sun direction: (%.2f, %.2f, %.2f)", lightDir.x, lightDir.y, lightDir.z);
     ImGui::End();
 
-    if (object) object->Draw();
+    ObjectsManager::DrawObjects();
 #ifndef RELEASE_BUILD
     if (sunLight.enabled)
         sunLight.DrawDebug(debugColorShaderProgram);
@@ -175,7 +178,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
-    if (object) delete object;
     if (texture) delete texture;
     return 0;
 }

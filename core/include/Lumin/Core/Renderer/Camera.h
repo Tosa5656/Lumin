@@ -17,17 +17,18 @@ enum Camera_Movement {
 };
 
 /**
- * @class Camera
+ * @class RendererCamera
  * @brief Класс камеры для управления положением и направлением обзора в 3D пространстве.
  *
  * Позволяет перемещать камеру, обрабатывать ввод с мыши и клавиатуры, получать view-матрицу.
  */
-class Camera {
+class RendererCamera {
 public:
-    Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 lookAt = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
+    RendererCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 lookAt = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
 
     void SetPosition(const glm::vec3& position);
     void SetLookAt(const glm::vec3& target);
+    void SetUp(const glm::vec3& up);
     glm::mat4 GetViewMatrix() const;
     glm::vec3 GetPosition() const { return Position; }
     glm::vec3 GetLookAtTarget() const { return LookAtTarget; }

@@ -22,8 +22,10 @@ extern mat4 View;
 extern mat4 Model;
 extern mat4 MVP;
 
-extern Camera camera;
+extern RendererCamera camera;
 extern Light light;
+
+inline RendererCamera GetMainCamera() { return camera; }
 
 void UpdateMVP();
 ShaderProgram CreateShaderProgram(Shader vertexShader, Shader fragmentShader);
