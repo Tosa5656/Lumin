@@ -1,6 +1,7 @@
 .vs
 */bin
 */build/
+*.obj
 *.exe
 *.log
 *.user

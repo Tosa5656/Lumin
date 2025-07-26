@@ -14,8 +14,6 @@
 #include "Lumin/Core/Renderer/Texture.h"
 #include <map>
 
-using namespace Lumin::Renderer;
-
 namespace Lumin {
 namespace Shaders {
     class Shader;
@@ -47,7 +45,7 @@ struct OBJMaterial {
     std::string name;
     glm::vec3 diffuseColor = glm::vec3(1.0f);
     std::string diffuseTexPath;
-    Texture* texture = nullptr;
+    Lumin::Renderer::Texture* texture = nullptr;
 };
 
 /**
@@ -65,7 +63,7 @@ public:
     GLuint GetVAO();
     void Init();
     void Draw();
-    void SetTexture(Texture* texture);
+    void SetTexture(Lumin::Renderer::Texture* texture);
 
     /**
      * @brief Загружает 3D-модель из OBJ-файла и создаёт объект.
@@ -104,7 +102,7 @@ private:
     size_t normalCount;
     unsigned int* indices;
     size_t indexCount;
-    Texture* texture;
+    Lumin::Renderer::Texture* texture;
     Lumin::Shaders::ShaderProgram shaderProgram;
     ObjectShaderProgram objectShaderProgram;
 };

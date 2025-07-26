@@ -47,7 +47,7 @@ GLuint Object::GetVAO()
 
 void Object::Init()
 {
-    shaderProgram = CreateShaderProgram(objectShaderProgram.vertexShader, objectShaderProgram.fragmentShader);
+    shaderProgram = Lumin::Renderer::CreateShaderProgram(objectShaderProgram.vertexShader, objectShaderProgram.fragmentShader);
     glGenVertexArrays(1, &VAO);
     glGenBuffers(4, VBO); // 0: vertices, 1: colors, 2: uvs, 3: normals
     glGenBuffers(1, &EBO);
@@ -191,7 +191,7 @@ Object* Object::FromOBJ(const std::string& path, ObjectShaderProgram objectShade
     // Загрузка текстур для материалов
     for (auto& mat : materialsVec) {
         if (!mat.diffuseTexPath.empty()) {
-            mat.texture = new Texture(mat.diffuseTexPath);
+            mat.texture = new Lumin::Renderer::Texture(mat.diffuseTexPath);
         }
     }
     std::vector<float> vertices, colors, uvs, normals;
@@ -215,7 +215,7 @@ Object* Object::FromOBJ(const std::string& path, ObjectShaderProgram objectShade
     return obj;
 }
 
-void Object::SetTexture(Texture* texture) {
+void Object::SetTexture(Lumin::Renderer::Texture* texture) {
     this->texture = texture;
 }
 
@@ -246,15 +246,15 @@ glm::mat4 Object::GetModelMatrix() const {
 
 void Object::Draw()
 {
-    UpdateMVP();
+    Lumin::Renderer::UpdateMVP();
     glUseProgram(shaderProgram.getId());
-    SetLightsUniforms(shaderProgram);
+    Lumin::Renderer::SetLightsUniforms(shaderProgram);
     // Передаём индивидуальную модельную матрицу
     glm::mat4 model = GetModelMatrix();
     GLuint modelLoc = glGetUniformLocation(shaderProgram.getId(), "Model");
     if (modelLoc != -1) glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
     GLuint mvpLoc = glGetUniformLocation(shaderProgram.getId(), "MVP");
-    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &Lumin::Renderer::MVP[0][0]);
     // Если есть материалы — рендер по материалам
     if (!materials.empty() && !materialIndices.empty()) {
         glBindVertexArray(VAO);

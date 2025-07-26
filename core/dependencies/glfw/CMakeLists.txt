@@ -120,6 +120,7 @@ write_basic_package_version_file(src/glfw3ConfigVersion.cmake
 # Add subdirectories
 #--------------------------------------------------------------------
 add_subdirectory(src)
+
 #--------------------------------------------------------------------
 # Install files other than the library
 # The library is installed by src/CMakeLists.txt

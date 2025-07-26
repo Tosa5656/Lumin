@@ -1,33 +1,45 @@
 #include <iostream>
 #include <Lumin.h>
-#include <Lumin/ScriptAPI/ScriptAPI.h>
 
-using namespace Lumin::Renderer;
+using namespace Lumin::Object;
 using namespace Lumin::Shaders;
 using namespace Lumin::Windowing;
+using namespace Lumin::Renderer;
 
-float lastX = 400, lastY = 300;
-bool firstMouse = true;
+Lumin::Object::Object* object = nullptr;
 GLFWwindow* g_window = nullptr;
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 Lumin::Renderer::Texture* texture = nullptr;
-bool uiMode = true; // true — UI (мышь видима), false — игра (мышь скрыта)
 Lumin::Object::ObjectShaderProgram objectSP;
 Lumin::Shaders::ShaderProgram debugShaderProgram;
 Lumin::Shaders::ShaderProgram debugColorShaderProgram;
 
+// --- FPS Camera globals ---
+float cameraYaw = -90.0f;
+float cameraPitch = 0.0f;
+float cameraDistance = 1.0f; // расстояние до look-at
+float lastX = 400, lastY = 300;
+bool firstMouse = true;
+
 void Awake() {}
+
+void UpdateCameraLookAtFromAngles() {
+    glm::vec3 pos = camera.GetPosition();
+    float yawRad = glm::radians(cameraYaw);
+    float pitchRad = glm::radians(cameraPitch);
+    glm::vec3 front;
+    front.x = cos(pitchRad) * cos(yawRad);
+    front.y = sin(pitchRad);
+    front.z = cos(pitchRad) * sin(yawRad);
+    camera.SetLookAt(pos + glm::normalize(front) * cameraDistance);
+}
 
 void Start()
 {
-    // Яркое солнце: белый цвет, интенсивность 3.0, светит под углом сверху сбоку (визуально "дальше")
     sunLight.enabled = true;
-    sunLight.direction = glm::normalize(glm::vec3(0.5f, -1.0f, 0.5f)); // под углом сверху сбоку
-    sunLight.color = glm::vec3(1.0f, 1.0f, 1.0f); // белый свет
+    sunLight.direction = glm::normalize(glm::vec3(0.5f, -1.0f, 0.5f));
+    sunLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
     sunLight.intensity = 2.0f;
-    sunLight.type = LightType::Directional;
-
+    sunLight.type = Lumin::Renderer::LightType::Directional;
     Lumin::Shaders::Shader dbgVert("resources/shaders/debug_color_vertex.glsl", GL_VERTEX_SHADER);
     Lumin::Shaders::Shader dbgFrag("resources/shaders/debug_color_fragment.glsl", GL_FRAGMENT_SHADER);
     debugColorShaderProgram = Lumin::Shaders::ShaderProgram(dbgVert, dbgFrag);
@@ -37,107 +49,98 @@ void Start()
     objectSP = Lumin::Object::ObjectShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
     debugShaderProgram.LinkShaders();
-
     texture = new Lumin::Renderer::Texture("resources/textures/texture.png");
-    GameObject object = GameObject("Object", "resources/model.obj", &objectSP);
-    //object = Lumin::Renderer::Object::FromOBJ("resources/model.obj", objectSP);
+    object = Lumin::Object::Object::FromOBJ("resources/model.obj", objectSP);
     //object->SetTexture(texture);
-}
-
-void ProcessInput(GLFWwindow* window)
-{
-    using namespace Lumin::Renderer;
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
-
-    glm::vec3 rot = sunLight.GetRotation();
-    float lightSpeed = 60.0f * deltaTime;
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        rot.y += lightSpeed;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        rot.y -= lightSpeed;
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        rot.x -= lightSpeed;
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        rot.x += lightSpeed;
-
-    sunLight.SetRotation(rot);
+    // FPS camera init
+    glm::vec3 pos = glm::vec3(0.0f, 2.0f, 5.0f);
+    glm::vec3 look = glm::vec3(0.0f, 0.0f, 0.0f);
+    camera.SetPosition(pos);
+    camera.SetLookAt(look);
+    glm::vec3 front = glm::normalize(look - pos);
+    cameraYaw = glm::degrees(atan2(front.z, front.x));
+    cameraPitch = glm::degrees(asin(front.y));
+    cameraDistance = glm::length(look - pos);
 }
 
 void Update()
 {
-    using namespace Lumin::Renderer;
-    float currentFrame = glfwGetTime();
-    deltaTime = currentFrame - lastFrame;
-    lastFrame = currentFrame;
-
-    // --- Change mode by ESC ---
-    static bool escPressed = false;
-    if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !escPressed) {
-        uiMode = !uiMode;
-        escPressed = true;
+    // --- FPS Camera movement ---
+    float moveSpeed = 0.1f;
+    float lightSpeed = 1.0f; // скорость вращения света
+    glm::vec3 pos = camera.GetPosition();
+    glm::vec3 look = camera.GetLookAtTarget();
+    glm::vec3 front = glm::normalize(look - pos);
+    glm::vec3 right = glm::normalize(glm::cross(front, camera.GetUp()));
+    glm::vec3 up = camera.GetUp();
+    // Движение позиции камеры (WASD/QE)
+    if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS)
+        pos += front * moveSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_S) == GLFW_PRESS)
+        pos -= front * moveSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_A) == GLFW_PRESS)
+        pos -= right * moveSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_D) == GLFW_PRESS)
+        pos += right * moveSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_Q) == GLFW_PRESS)
+        pos += up * moveSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_E) == GLFW_PRESS)
+        pos -= up * moveSpeed;
+    camera.SetPosition(pos);
+    // --- Управление направлением солнца (стрелки) ---
+    glm::vec3 rot = sunLight.GetRotation();
+    if (glfwGetKey(g_window, GLFW_KEY_UP) == GLFW_PRESS)
+        rot.x -= lightSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        rot.x += lightSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        rot.y += lightSpeed;
+    if (glfwGetKey(g_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        rot.y -= lightSpeed;
+    sunLight.SetRotation(rot);
+    // --- Mouse look ---
+    double xpos, ypos;
+    glfwGetCursorPos(g_window, &xpos, &ypos);
+    if (firstMouse) {
+        lastX = (float)xpos;
+        lastY = (float)ypos;
+        firstMouse = false;
     }
-    if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
-        escPressed = false;
-    }
+    float xoffset = (float)xpos - lastX;
+    float yoffset = lastY - (float)ypos; // y inverted
+    lastX = (float)xpos;
+    lastY = (float)ypos;
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+    cameraYaw += xoffset;
+    cameraPitch += yoffset;
+    if (cameraPitch > 89.0f) cameraPitch = 89.0f;
+    if (cameraPitch < -89.0f) cameraPitch = -89.0f;
+    UpdateCameraLookAtFromAngles();
 
-    // --- Camera move ---
-    if (uiMode) {
-        glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    } else {
-        glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
-
-    // ImGui frame start
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
-    ImGui::Begin("Mode Info");
-    ImGui::Text("Current mode: %s", uiMode ? "UI (ESC to switch)" : "Game (ESC to switch)");
+    ImGui::Begin("Camera & Light Info");
+    ImGui::Text("Camera position: (%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z);
+    ImGui::Text("Camera yaw: %.2f, pitch: %.2f", cameraYaw, cameraPitch);
+    glm::vec3 lookat = camera.GetLookAtTarget();
+    ImGui::Text("Camera look at: (%.2f, %.2f, %.2f)", lookat.x, lookat.y, lookat.z);
+    glm::vec3 lightDir = sunLight.direction;
+    ImGui::Text("Sun direction: (%.2f, %.2f, %.2f)", lightDir.x, lightDir.y, lightDir.z);
     ImGui::End();
 
-    if (!uiMode) {
-        ProcessInput(g_window);
-        double xpos, ypos;
-        glfwGetCursorPos(g_window, &xpos, &ypos);
-        static bool firstMouse = true;
-        static double lastX = 0.0, lastY = 0.0;
-        if (firstMouse) {
-            lastX = xpos;
-            lastY = ypos;
-            firstMouse = false;
-        }
-        float xoffset = static_cast<float>(xpos - lastX);
-        float yoffset = static_cast<float>(lastY - ypos);
-        lastX = xpos;
-        lastY = ypos;
-        camera.ProcessMouseMovement(xoffset, yoffset);
-    } else {
-        static bool firstMouse = true;
-        firstMouse = true;
-    }
-
-    ObjectsManager::DrawObjects();
-
-
+    if (object) object->Draw();
 #ifndef RELEASE_BUILD
-    // Debug: рисуем только один источник света (солнце)
     if (sunLight.enabled)
         sunLight.DrawDebug(debugColorShaderProgram);
 #endif
-
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    using namespace Lumin::Renderer;
     glViewport(0, 0, width, height);
     Projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
 }
@@ -172,5 +175,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+    if (object) delete object;
+    if (texture) delete texture;
     return 0;
 }
