@@ -1,6 +1,12 @@
 ﻿cmake_minimum_required(VERSION 3.27)
 
-set(PROJECT_NAME LuminCore)
+# Используем имя цели из родительского проекта, если оно определено
+if(DEFINED LUMIN_CORE_TARGET)
+    set(PROJECT_NAME ${LUMIN_CORE_TARGET})
+else()
+    set(PROJECT_NAME LuminCore)
+endif()
+
 project(${PROJECT_NAME})
 
 set(CXX_STANDARD 18)
@@ -9,8 +15,6 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin)
-
-include_directories(include/)
 
 set(SOURCES
     src/Lumin/Core/Renderer/Camera.cpp
@@ -24,7 +28,14 @@ set(SOURCES
     src/Lumin/Core/stb_image_impl.cpp
 )
 
+# Сначала создаём библиотеку
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+
+# Затем устанавливаем include директории
+target_include_directories(${PROJECT_NAME} PUBLIC 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 add_subdirectory(dependencies/glfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
@@ -46,4 +57,9 @@ set(IMGUI_SRC
 )
 
 target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SRC})
-target_include_directories(${PROJECT_NAME} PUBLIC dependencies/imgui dependencies/imgui/backends)
+
+# Используем относительные пути для ImGui
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui/backends>
+)

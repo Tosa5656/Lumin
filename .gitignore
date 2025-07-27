@@ -1,7 +1,7 @@
 .vs
-*/bin
-*/build/
-*.obj
+bin
+lib
+build
 *.exe
 *.log
 *.user
