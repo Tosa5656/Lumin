@@ -1,5 +1,5 @@
 # Project Manager CMakeLists.txt
-# Пока что это заглушка для будущего менеджера проектов
+# Исполняемый файл для управления проектами
 
 cmake_minimum_required(VERSION 3.27)
 
@@ -10,12 +10,28 @@ else()
     set(PROJECT_NAME ProjectManager)
 endif()
 
-# Создаём заглушку для ProjectManager
-add_executable(${PROJECT_NAME}
-    src/main.cpp
-)
-
-# Пока что main.cpp не существует, поэтому комментируем
-# Когда будет готов project_manager, раскомментировать
-
-# target_link_libraries(${PROJECT_NAME} PRIVATE LuminCore) 
+# Проверяем наличие исходных файлов
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp")
+    # Создаём исполняемый файл ProjectManager
+    add_executable(${PROJECT_NAME}
+        src/main.cpp
+    )
+    
+    # Подключаем библиотеки, если они доступны
+    if(TARGET ${LUMIN_CORE_TARGET})
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${LUMIN_CORE_TARGET})
+    endif()
+    
+    if(TARGET ${LUMIN_SCRIPT_API_TARGET})
+        target_link_libraries(${PROJECT_NAME} PRIVATE ${LUMIN_SCRIPT_API_TARGET})
+    endif()
+    
+    # Настройка include директорий
+    target_include_directories(${PROJECT_NAME} PRIVATE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    )
+    
+    message(STATUS "Project Manager executable configured: ${PROJECT_NAME}")
+else()
+    message(WARNING "Project Manager source files not found. Skipping executable creation.")
+endif() 

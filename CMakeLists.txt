@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Опции сборки
 option(BUILD_EDITOR "Build the editor" ON)
 option(BUILD_SCRIPT_API "Build the script API" ON)
-option(BUILD_PROJECT_MANAGER "Build the project manager" OFF)
+option(BUILD_PROJECT_MANAGER "Build the project manager" ON)
 
 # Глобальные настройки - убираем Debug из путей
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -92,6 +92,16 @@ if(BUILD_EDITOR)
     add_dependencies(CopyEditor CreateDirectories)
 endif()
 
+if(BUILD_PROJECT_MANAGER)
+    add_custom_target(CopyProjectManager ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:${LUMIN_PROJECT_MANAGER_TARGET}> ${CMAKE_SOURCE_DIR}/bin/
+        COMMENT "Copying project manager executable to bin directory"
+    )
+    add_dependencies(CopyProjectManager CreateDirectories)
+endif()
+
 # Копирование библиотек
 add_custom_target(CopyLibraries ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/lib
@@ -146,4 +156,15 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/core/resources")
         COMMENT "Copying core resources to bin directory"
     )
     add_dependencies(CopyCoreResources CreateDirectories)
+endif()
+
+# Копирование ресурсов project manager в корень bin
+if(BUILD_PROJECT_MANAGER AND EXISTS "${CMAKE_SOURCE_DIR}/project_manager/resources")
+    add_custom_target(CopyProjectManagerResources ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/project_manager/resources ${CMAKE_SOURCE_DIR}/bin/
+        COMMENT "Copying project manager resources to bin root directory"
+    )
+    add_dependencies(CopyProjectManagerResources CreateDirectories)
 endif() 
