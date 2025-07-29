@@ -59,7 +59,7 @@ set(IMGUI_SRC
 target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SRC})
 
 # Используем относительные пути для ImGui
-target_include_directories(${PROJECT_NAME} PRIVATE 
+target_include_directories(${PROJECT_NAME} PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui/backends>
 )

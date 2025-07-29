@@ -50,14 +50,8 @@ if(BUILD_EDITOR)
     add_subdirectory(editor)
 endif()
 
-# Project Manager пока что отключён по умолчанию
 if(BUILD_PROJECT_MANAGER)
-    # Проверяем, есть ли исходные файлы
-    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/project_manager/src/main.cpp")
-        add_subdirectory(project_manager)
-    else()
-        message(WARNING "Project Manager source files not found. Skipping...")
-    endif()
+    add_subdirectory(project_manager)
 endif()
 
 # Информация о сборке
@@ -167,4 +161,16 @@ if(BUILD_PROJECT_MANAGER AND EXISTS "${CMAKE_SOURCE_DIR}/project_manager/resourc
         COMMENT "Copying project manager resources to bin root directory"
     )
     add_dependencies(CopyProjectManagerResources CreateDirectories)
+endif() 
+
+if(BUILD_PROJECT_MANAGER)
+    add_custom_target(CopyProjectManagerLibraries ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin/templates/project/library
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/bin/templates/project/library/core
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/script_api ${CMAKE_SOURCE_DIR}/bin/templates/project/library/script_api
+        COMMENT "Copying core and script api libraries to project templates"
+    )
+    add_dependencies(CopyProjectManagerLibraries CreateDirectories)
 endif() 

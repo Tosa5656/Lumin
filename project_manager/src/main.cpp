@@ -30,27 +30,18 @@ void CreateProjectDirectories()
 {
     std::string projectPath = project_info["PROJECT_PATH"];
 
-    try {
-        // Создаем папку projects если её нет
-        if(!std::filesystem::exists("projects/"))
-            std::filesystem::create_directories("projects/");
+    if(!std::filesystem::exists("projects/"))
+        std::filesystem::create_directories("projects/");
 
-        // Проверяем, существует ли шаблон
-        if(!std::filesystem::exists("templates/project")) {
-            std::cerr << "Ошибка: Шаблон проекта 'templates/project' не найден!" << std::endl;
-            std::cerr << "Создайте папку templates/project с шаблоном проекта." << std::endl;
-            return;
-        }
-
-        // Копируем шаблон проекта
-        std::filesystem::copy("templates/project", projectPath, std::filesystem::copy_options::recursive);
-        std::cout << "Шаблон проекта скопирован успешно!" << std::endl;
-        
-    } catch (const std::filesystem::filesystem_error& e) {
-        std::cerr << "Ошибка файловой системы: " << e.what() << std::endl;
-    } catch (const std::exception& e) {
-        std::cerr << "Ошибка при создании директорий: " << e.what() << std::endl;
+    // Проверяем, существует ли шаблон
+    if(!std::filesystem::exists("templates/project")) {
+        std::cerr << "Ошибка: Шаблон проекта 'templates/project' не найден!" << std::endl;
+        std::cerr << "Создайте папку templates/project с шаблоном проекта." << std::endl;
+        return;
     }
+
+    // Копируем шаблон проекта
+    std::filesystem::copy("templates/project", projectPath, std::filesystem::copy_options::recursive);
 }
 
 void CreateProjectInfo()
@@ -58,19 +49,12 @@ void CreateProjectInfo()
     std::string projectPath = project_info["PROJECT_PATH"];
     std::string filePath = projectPath + "/project_info.cfg";
     
-    try {
-        std::ofstream projectInfoFile(filePath);
-        if (projectInfoFile.is_open()) {
-            for (const auto& [key, value] : project_info) {
-                projectInfoFile << key << "=" << value << std::endl;
-            }
-            projectInfoFile.close();
-            std::cout << "Файл project_info.cfg создан успешно!" << std::endl;
-        } else {
-            std::cerr << "Ошибка: Не удалось создать файл " << filePath << std::endl;
+    std::ofstream projectInfoFile(filePath);
+    if (projectInfoFile.is_open()) {
+        for (const auto& [key, value] : project_info) {
+            projectInfoFile << key << "=" << value << std::endl;
         }
-    } catch (const std::exception& e) {
-        std::cerr << "Ошибка при создании project_info.cfg: " << e.what() << std::endl;
+        projectInfoFile.close();
     }
 }
 
@@ -82,7 +66,6 @@ void CreateProjectCMakeLists()
     // Проверяем, существует ли файл
     std::ifstream inputFile(filePath);
     if (!inputFile.is_open()) {
-        std::cerr << "Ошибка: Файл " << filePath << " не найден!" << std::endl;
         return;
     }
     
@@ -98,14 +81,12 @@ void CreateProjectCMakeLists()
     lines[2] = "set(PROJECT_NAME " + project_info["PROJECT_NAME"] + ")";
     lines[3] = "set(PROJECT_VERSION " + project_info["PROJECT_VERSION"] + ")";
     
-    // Записываем обновленный файл
     std::ofstream outputFile(filePath, std::ios::trunc);
     if (outputFile.is_open()) {
         for (const auto& str : lines) {
             outputFile << str << std::endl;
         }
         outputFile.close();
-        std::cout << "CMakeLists.txt обновлен успешно!" << std::endl;
     }
 }
 
@@ -117,11 +98,6 @@ void CreateProject()
     std::cout << "Enter project name: ";        
     std::string projectName;
     std::cin >> projectName;
-    
-    if (projectName.empty()) {
-        std::cout << "Ошибка: Имя проекта не может быть пустым!" << std::endl;
-        return;
-    }
     
     project_info["PROJECT_NAME"] = projectName;
     project_info["PROJECT_PATH"] = "projects/" + projectName;

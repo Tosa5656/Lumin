@@ -15,6 +15,32 @@ file(GLOB_RECURSE PROJECT_HEADERS include/*.h)
 
 add_executable(${PROJECT_NAME} ${PROJECT_HEADERS} ${PROJECT_SOURCES})
 
+set(LUMIN_CORE_TARGET "LuminCore" CACHE STRING "Core library target name")
+set(LUMIN_SCRIPT_API_TARGET "LuminScriptAPI" CACHE STRING "Script API target name")
+
+# Проверяем, есть ли библиотеки в папке library
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/library/core/CMakeLists.txt")
+    add_subdirectory(library/core)
+    add_subdirectory(library/script_api)
+else()
+    message(FATAL_ERROR "Library files not found. Please copy core and script_api to library folder.")
+endif()
+
+# Подключаем библиотеки Lumin Engine
+target_link_libraries(${PROJECT_NAME} 
+    ${LUMIN_CORE_TARGET}
+    ${LUMIN_SCRIPT_API_TARGET}
+)
+
+# Настройка include директорий
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/library/core/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/library/script_api/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/library/core/dependencies/imgui
+    ${CMAKE_CURRENT_SOURCE_DIR}/library/core/dependencies/imgui/backends
+)
+
 add_custom_target(CreateDirectories ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin
     COMMENT "Creating output directories"
