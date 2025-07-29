@@ -75,7 +75,7 @@ cmake --build build
 - `bin/` — исполняемые файлы и ресурсы
 - `lib/` — библиотеки
 
-Подробнее о системе сборки вы можете прочитать в [BUILD.md]("https://github.com/Tosa5656/Lumin/blob/master/BUILD.md")
+Подробнее о системе сборки вы можете прочитать в [BUILD.md](https://github.com/Tosa5656/Lumin/blob/master/BUILD.md)
 
 ### Запуск
 ```bash
