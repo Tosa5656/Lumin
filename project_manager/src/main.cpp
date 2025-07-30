@@ -94,10 +94,22 @@ void CreateProject()
 {
     ClearScreen();
     std::cout << "Welcome to the creation manager!" << std::endl;
-
-    std::cout << "Enter project name: ";        
+     
     std::string projectName;
-    std::cin >> projectName;
+    while(true)
+    {
+        std::cout << "Enter project name: ";
+        std::cin >> projectName;
+        
+        if(std::filesystem::exists("projects/" + projectName))
+        {
+            std::cout << "Project already exists!" << std::endl;
+        }
+        else
+        {
+            break;
+        }
+    }
     
     project_info["PROJECT_NAME"] = projectName;
     project_info["PROJECT_PATH"] = "projects/" + projectName;
