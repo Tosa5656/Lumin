@@ -13,12 +13,20 @@
 
 GLFWwindow* g_window = nullptr;
 
-void Awake() {}
-
-void Start() {}
-
-void Update() 
+void onAwake() 
 {
+    Awake();
+}
+
+void onStart() 
+{
+    Start();
+}
+
+void onUpdate() 
+{
+    Update();
+
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
 
@@ -52,7 +60,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         std::cout << "Lumin started in debug mode." << std::endl;
     #endif
 
-    Lumin::Windowing::Window window(800, 600, "Lumin", Awake, Start);
+    Lumin::Windowing::Window window(800, 600, "Lumin", onAwake, onStart);
     g_window = window.GetGLFWwindow();
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -62,7 +70,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     ImGui_ImplOpenGL3_Init("#version 330");
     glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetFramebufferSizeCallback(g_window, framebuffer_size_callback);
-    window.run(Update);
+    window.run(onUpdate);
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
