@@ -1,29 +1,33 @@
 /*
-  _                            _              _____   _                 _   _         
- | |                          (_)            / ____| | |               | | (_)        
- | |       _   _   _ __ ___    _   _ __     | (___   | |_   _   _    __| |  _    ___  
- | |      | | | | | '_  _ \  | | | '_ \     \___ \  | __| | | | |  / _ | | | |  / _ \ 
+  _                            _              _____   _                 _   _
+ | |                          (_)            / ____| | |               | | (_)
+ | |       _   _   _ __ ___    _   _ __     | (___   | |_   _   _    __| |  _    ___
+ | |      | | | | | '_  _ \  | | | '_ \     \___ \  | __| | | | |  / _ | | | |  / _ \
  | |____  | |_| | | | | | | | | | | | | |    ____) | | |_  | |_| | | (_| | | | | (_) |
- |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
-                                                                                      
+ |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/
+
 */
 #include <iostream>
 #include <Lumin.h>
 #include "Lumin/ScriptAPI/ScriptAPI.h"
 
+extern void Awake();
+extern void Update();
+extern void Start();
+
 GLFWwindow* g_window = nullptr;
 
-void onAwake() 
+void onAwake()
 {
     Awake();
 }
 
-void onStart() 
+void onStart()
 {
     Start();
 }
 
-void onUpdate() 
+void onUpdate()
 {
     Update();
 
@@ -31,7 +35,6 @@ void onUpdate()
     ImGui_ImplGlfw_NewFrame();
 
     ImGui::NewFrame();
-    ImGui::End();
 
     ObjectsManager::DrawObjects();
 
@@ -45,20 +48,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 #ifdef _WIN32
-    #ifdef RELEASE_BUILD
-        #include <Windows.h>
-        int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-    #else
-        int main()
-    #endif
+#ifdef RELEASE_BUILD
+#include <Windows.h>
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #else
-    int main()
+int main()
+#endif
+#else
+int main()
 #endif
 {
-    #ifdef RELEASE_BUILD
-    #else
-        std::cout << "Lumin started in debug mode." << std::endl;
-    #endif
+#ifdef RELEASE_BUILD
+#else
+    std::cout << "Lumin started in debug mode." << std::endl;
+#endif
 
     Lumin::Windowing::Window window(800, 600, "Lumin", onAwake, onStart);
     g_window = window.GetGLFWwindow();

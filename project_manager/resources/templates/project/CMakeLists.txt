@@ -52,3 +52,14 @@ add_custom_target(CopyProject ALL
     COMMENT "Copying project manager executable to bin directory"
 )
 add_dependencies(CopyProject CreateDirectories)
+
+if(WIN32)
+    set(WINDOWS_TARGET_PLATFORM "win64" CACHE STRING "Windows target platform (win32 or win64)")
+    message(STATUS "Windows target platform: ${WINDOWS_TARGET_PLATFORM}")
+    add_custom_target(CopyWindowsDependencies ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/library/dll/${WINDOWS_TARGET_PLATFORM} ${CMAKE_SOURCE_DIR}/bin/
+        COMMENT "Copying Windows dependencies to project templates"
+    )
+    add_dependencies(CopyWindowsDependencies CreateDirectories)
+endif()

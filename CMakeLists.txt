@@ -12,6 +12,18 @@ option(BUILD_EDITOR "Build the editor" ON)
 option(BUILD_SCRIPT_API "Build the script API" ON)
 option(BUILD_PROJECT_MANAGER "Build the project manager" ON)
 
+if(WIN32)
+    set(WINDOWS_TARGET_PLATFORM "win64" CACHE STRING "Windows target platform (win32 or win64)")
+    set_property(CACHE WINDOWS_TARGET_PLATFORM PROPERTY STRINGS "win32" "win64")
+    
+    # Проверка корректности выбора платформы
+    if(NOT WINDOWS_TARGET_PLATFORM STREQUAL "win32" AND NOT WINDOWS_TARGET_PLATFORM STREQUAL "win64")
+        message(FATAL_ERROR "WINDOWS_TARGET_PLATFORM must be either 'win32' or 'win64', got: ${WINDOWS_TARGET_PLATFORM}")
+    endif()
+    
+    message(STATUS "Windows target platform: ${WINDOWS_TARGET_PLATFORM}")
+endif()
+
 # Глобальные настройки - убираем Debug из путей
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -62,6 +74,9 @@ message(STATUS "Build options:")
 message(STATUS "  - Editor: ${BUILD_EDITOR}")
 message(STATUS "  - Script API: ${BUILD_SCRIPT_API}")
 message(STATUS "  - Project Manager: ${BUILD_PROJECT_MANAGER}")
+if(WIN32)
+    message(STATUS "  - Windows target platform: ${WINDOWS_TARGET_PLATFORM}")
+endif()
 message(STATUS "Target names:")
 message(STATUS "  - Core: ${LUMIN_CORE_TARGET}")
 message(STATUS "  - Script API: ${LUMIN_SCRIPT_API_TARGET}")
@@ -170,7 +185,21 @@ if(BUILD_PROJECT_MANAGER)
                 ${CMAKE_SOURCE_DIR}/core ${CMAKE_SOURCE_DIR}/bin/templates/project/library/core
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${CMAKE_SOURCE_DIR}/script_api ${CMAKE_SOURCE_DIR}/bin/templates/project/library/script_api
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/dll ${CMAKE_SOURCE_DIR}/bin/templates/project/library/dll
         COMMENT "Copying core and script api libraries to project templates"
     )
     add_dependencies(CopyProjectManagerLibraries CreateDirectories)
-endif() 
+endif()
+
+if(WIN32)
+    set(WINDOWS_TARGET_PLATFORM "win64" CACHE STRING "Windows target platform (win32 or win64)")
+    message(STATUS "Windows target platform: ${WINDOWS_TARGET_PLATFORM}")
+    add_custom_target(CopyWindowsDependencies ALL
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin/templates/project/library/dll
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${CMAKE_SOURCE_DIR}/dll/${WINDOWS_TARGET_PLATFORM} ${CMAKE_SOURCE_DIR}/bin/
+        COMMENT "Copying Windows dependencies to project templates"
+    )
+    add_dependencies(CopyWindowsDependencies CreateDirectories)
+endif()
