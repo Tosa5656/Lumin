@@ -18,8 +18,6 @@
 #include <filesystem>
 #include <glm/glm.hpp>
 
-//namespace fs = std::filesystem;
-
 namespace Lumin {
 namespace Object {
 
@@ -113,7 +111,6 @@ static std::map<std::string, Lumin::Object::OBJMaterial> LoadMTL(const std::stri
     return materials;
 }
 
-// Заменяем std::filesystem на простую функцию для получения директории
 static std::string GetBaseDir(const std::string& path) {
     size_t pos = path.find_last_of("/\\");
     if (pos == std::string::npos) return ".";
@@ -180,7 +177,6 @@ Object* Object::FromOBJ(const std::string& path, ObjectShaderProgram objectShade
                 }
                 face.push_back(idx);
             }
-            // triangulate face (fan)
             for (size_t i = 1; i + 1 < face.size(); ++i) {
                 indices.push_back(face[0]);
                 indices.push_back(face[i]);
@@ -197,7 +193,6 @@ Object* Object::FromOBJ(const std::string& path, ObjectShaderProgram objectShade
         std::cerr << "[OBJ] No faces found in: " << path << std::endl;
         return nullptr;
     }
-    // Загрузка текстур для материалов
     for (auto& mat : materialsVec) {
         if (!mat.diffuseTexPath.empty()) {
             mat.texture = new Lumin::Renderer::Texture(mat.diffuseTexPath);
@@ -258,13 +253,11 @@ void Object::Draw()
     Lumin::Renderer::UpdateMVP();
     glUseProgram(shaderProgram.getId());
     Lumin::Renderer::SetLightsUniforms(shaderProgram);
-    // Передаём индивидуальную модельную матрицу
     glm::mat4 model = GetModelMatrix();
     GLuint modelLoc = glGetUniformLocation(shaderProgram.getId(), "Model");
     if (modelLoc != -1) glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
     GLuint mvpLoc = glGetUniformLocation(shaderProgram.getId(), "MVP");
     glUniformMatrix4fv(mvpLoc, 1, GL_FALSE, &Lumin::Renderer::MVP[0][0]);
-    // Если есть материалы — рендер по материалам
     if (!materials.empty() && !materialIndices.empty()) {
         glBindVertexArray(VAO);
         size_t triCount = materialIndices.size();
@@ -286,5 +279,5 @@ void Object::Draw()
     }
 }
 
-} // namespace Renderer
-} // namespace Lumin
+}
+}

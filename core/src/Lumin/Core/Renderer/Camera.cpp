@@ -13,7 +13,6 @@
 
 namespace Lumin {
 namespace Renderer {
-
 RendererCamera::RendererCamera(glm::vec3 position, glm::vec3 lookAt, glm::vec3 up)
     : Position(position), LookAtTarget(lookAt), Up(up)
 {
@@ -35,5 +34,5 @@ glm::mat4 RendererCamera::GetViewMatrix() const {
     return glm::lookAt(Position, LookAtTarget, Up);
 }
 
-} // namespace Renderer
-} // namespace Lumin
+}
+}

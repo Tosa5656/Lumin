@@ -12,7 +12,6 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "Lumin/Core/Colors/Colors.h"
 #include "Lumin/Core/Window/Window.h"
 #include "Lumin/Core/Renderer/Renderer.h"
 #include "Lumin/Core/Object/Object.h"
@@ -23,7 +22,3 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
-
-#ifndef RELEASE_BUILD
-#include <glad/glad.h>
-#endif

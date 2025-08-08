@@ -7,14 +7,12 @@
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
 */
-// Implementation of Light system for Lumin Engine (single sunlight)
 
 #include "Lumin/Core/Renderer/Light.h"
 #include "Lumin/Core/Renderer/Renderer.h"
 
 namespace Lumin {
 namespace Renderer {
-
 Light sunLight;
 
 Light::Light()
@@ -32,10 +30,8 @@ bool Light::IsEnabled() const {
 }
 
 void Light::UpdateDirectionFromRotation() {
-    // Yaw (y), Pitch (x), Roll (z) — как у камеры
     float yaw = glm::radians(rotation.y);
     float pitch = glm::radians(rotation.x);
-    // По умолчанию свет направлен вдоль -Z
     glm::vec3 dir;
     dir.x = cos(pitch) * sin(yaw);
     dir.y = sin(pitch);
@@ -49,5 +45,5 @@ void Light::DrawDebug(Lumin::Shaders::ShaderProgram& shader) const {
     DrawLine(lightPos, glm::vec3(0.0f), color, shader);
 }
 
-} // namespace Renderer
-} // namespace Lumin 
+}
+}

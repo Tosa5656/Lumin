@@ -21,7 +21,6 @@
 
 namespace Lumin {
 namespace Renderer {
-
 using Lumin::Shaders::Shader;
 using Lumin::Shaders::ShaderProgram;
 using glm::mat4;
@@ -45,5 +44,5 @@ void DrawPoint(const glm::vec3& pos, const glm::vec3& color, ShaderProgram& shad
 void DrawLine(const glm::vec3& from, const glm::vec3& to, const glm::vec3& color, ShaderProgram& shader);
 void SetLightsUniforms(ShaderProgram& shader);
 
-} // namespace Renderer
-} // namespace Lumin
+}
+}

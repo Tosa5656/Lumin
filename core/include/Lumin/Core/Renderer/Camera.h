@@ -8,29 +8,20 @@
                                                                                       
 */
 #pragma once
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Lumin {
 namespace Renderer {
 
-/**
- * @enum Camera_Movement
- * @brief Перечисление направлений движения камеры.
- */
 enum Camera_Movement {
-    FORWARD,   ///< Вперёд
-    BACKWARD,  ///< Назад
-    LEFT,      ///< Влево
-    RIGHT      ///< Вправо
+    FORWARD,
+    BACKWARD,
+    LEFT,
+    RIGHT
 };
 
-/**
- * @class RendererCamera
- * @brief Класс камеры для управления положением и направлением обзора в 3D пространстве.
- *
- * Позволяет перемещать камеру, обрабатывать ввод с мыши и клавиатуры, получать view-матрицу.
- */
 class RendererCamera {
 public:
     RendererCamera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3 lookAt = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
@@ -49,5 +40,5 @@ private:
     glm::vec3 Up;
 };
 
-} // namespace Renderer
-} // namespace Lumin
+}
+}

@@ -7,7 +7,6 @@
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
 */
-// 3D Object representation for Lumin Engine
 #pragma once
 
 #include <vector>
@@ -29,19 +28,9 @@ namespace Shaders {
     class ShaderProgram;
 }
 namespace Object {
-
-/**
- * @class ObjectShaderProgram
- * @brief Структура для хранения вершинного и фрагментного шейдеров объекта.
- */
 class ObjectShaderProgram
 {
 public:
-    /**
-     * @brief Конструктор с параметрами.
-     * @param vertexShader Вершинный шейдер
-     * @param fragmentShader Фрагментный шейдер
-     */
     ObjectShaderProgram(Lumin::Shaders::Shader vertexShader, Lumin::Shaders::Shader fragmentShader)
         : vertexShader(vertexShader), fragmentShader(fragmentShader) {}
     ObjectShaderProgram() = default;
@@ -57,12 +46,6 @@ struct OBJMaterial {
     Lumin::Renderer::Texture* texture = nullptr;
 };
 
-/**
- * @class Object
- * @brief Класс 3D-объекта для Lumin Engine.
- *
- * Содержит данные о геометрии, цвете, текстуре и методы для инициализации и отрисовки.
- */
 class Object
 {
 public:
@@ -74,12 +57,6 @@ public:
     void Draw();
     void SetTexture(Lumin::Renderer::Texture* texture);
 
-    /**
-     * @brief Загружает 3D-модель из OBJ-файла и создаёт объект.
-     * @param path Путь к OBJ-файлу
-     * @param objectShaderProgram Шейдерная программа для объекта
-     * @return Указатель на созданный Object (или nullptr при ошибке)
-     */
     static Object* FromOBJ(const std::string& path, ObjectShaderProgram objectShaderProgram);
 
     // Transform
@@ -93,12 +70,12 @@ public:
 
 private:
     glm::vec3 position = glm::vec3(0.0f);
-    glm::vec3 rotation = glm::vec3(0.0f); // в градусах
+    glm::vec3 rotation = glm::vec3(0.0f);
     glm::vec3 scale    = glm::vec3(1.0f);
     void SetMaterialUniforms(int materialIdx);
     std::vector<OBJMaterial> materials;
-    std::vector<int> materialIndices; // per-face/triangle
-    std::string name; ///< Имя объекта
+    std::vector<int> materialIndices;
+    std::string name;
 
     unsigned int VBO[4], VAO, EBO;
     float* vertices;

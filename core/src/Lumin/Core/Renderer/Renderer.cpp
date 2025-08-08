@@ -7,14 +7,12 @@
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
 */
-// Implementation of Renderer module for Lumin Engine (single sunlight)
 
 #include "Lumin/Core/Renderer/Renderer.h"
 #include <string>
 
 namespace Lumin {
 namespace Renderer {
-
 RendererCamera camera;
 Light light;
 
@@ -141,5 +139,5 @@ void SetLightsUniforms(Lumin::Shaders::ShaderProgram& shader) {
     glUniform1i(enLoc, sunLight.enabled ? 1 : 0);
 }
 
-} // namespace Renderer
-} // namespace Lumin
+}
+}

@@ -23,10 +23,9 @@ Lumin::Object::ObjectShaderProgram objectSP;
 Lumin::Shaders::ShaderProgram debugShaderProgram;
 Lumin::Shaders::ShaderProgram debugColorShaderProgram;
 
-// --- FPS Camera globals ---
 float cameraYaw = -90.0f;
 float cameraPitch = 0.0f;
-float cameraDistance = 1.0f; // расстояние до look-at
+float cameraDistance = 1.0f;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 
@@ -64,7 +63,6 @@ void Start()
     //object->SetTexture(texture);
 
 
-    // FPS camera init
     glm::vec3 pos = glm::vec3(0.0f, 2.0f, 5.0f);
     glm::vec3 look = glm::vec3(0.0f, 0.0f, 0.0f);
     mainCamera.transform.SetPosition(Vector3(pos.x, pos.y, pos.z));
@@ -77,15 +75,13 @@ void Start()
 
 void Update()
 {
-    // --- FPS Camera movement ---
     float moveSpeed = 0.1f;
-    float lightSpeed = 1.0f; // скорость вращения света
+    float lightSpeed = 1.0f;
     glm::vec3 pos = glm::vec3(mainCamera.transform.GetPosition().x, mainCamera.transform.GetPosition().y, mainCamera.transform.GetPosition().z);
     glm::vec3 look = glm::vec3(mainCamera.transform.GetLookAt().x, mainCamera.transform.GetLookAt().y, mainCamera.transform.GetLookAt().z);
     glm::vec3 front = glm::normalize(look - pos);
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z)));
     glm::vec3 up = glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z);
-    // Движение позиции камеры (WASD/QE)
     if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS)
         pos += front * moveSpeed;
     if (glfwGetKey(g_window, GLFW_KEY_S) == GLFW_PRESS)
@@ -99,7 +95,7 @@ void Update()
     if (glfwGetKey(g_window, GLFW_KEY_E) == GLFW_PRESS)
         pos -= up * moveSpeed;
     mainCamera.transform.SetPosition(Vector3(pos.x, pos.y, pos.z));
-    // --- Управление направлением солнца (стрелки) ---
+
     glm::vec3 rot = sunLight.GetRotation();
     if (glfwGetKey(g_window, GLFW_KEY_UP) == GLFW_PRESS)
         rot.x -= lightSpeed;
@@ -110,7 +106,7 @@ void Update()
     if (glfwGetKey(g_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         rot.y -= lightSpeed;
     sunLight.SetRotation(rot);
-    // --- Mouse look ---
+
     double xpos, ypos;
     glfwGetCursorPos(g_window, &xpos, &ypos);
     if (firstMouse) {
@@ -119,7 +115,7 @@ void Update()
         firstMouse = false;
     }
     float xoffset = (float)xpos - lastX;
-    float yoffset = lastY - (float)ypos; // y inverted
+    float yoffset = lastY - (float)ypos;
     lastX = (float)xpos;
     lastY = (float)ypos;
     float sensitivity = 0.1f;

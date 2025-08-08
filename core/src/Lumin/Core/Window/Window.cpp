@@ -82,5 +82,5 @@ Window::~Window()
         glfwDestroyWindow(window);
 }
 
-} // namespace Windowing
-} // namespace Lumin
+}
+}

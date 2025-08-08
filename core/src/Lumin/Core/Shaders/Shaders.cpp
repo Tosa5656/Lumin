@@ -72,5 +72,5 @@ void ShaderProgram::LinkShaders()
     }
 }
 
-} // namespace Shaders
-} // namespace Lumin
+}
+}

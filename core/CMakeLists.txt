@@ -1,42 +1,37 @@
 ﻿cmake_minimum_required(VERSION 3.27)
 
-# Используем имя цели из родительского проекта, если оно определено
+# Use the project name from the variable if it is defined, otherwise use a default name
 if(DEFINED LUMIN_CORE_TARGET)
     set(PROJECT_NAME ${LUMIN_CORE_TARGET})
 else()
     set(PROJECT_NAME LuminCore)
 endif()
 
-project(${PROJECT_NAME})
+set(CORE_VERSION 0.4)
 
+project(${PROJECT_NAME} VERSION ${CORE_VERSION} LANGUAGES CXX)
+
+# C++ standard settings
 set(CXX_STANDARD 18)
 
+# Set base paths
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
 set(RESOURCES_DIR ${CMAKE_SOURCE_DIR}/resources)
 set(BIN_DIR ${CMAKE_SOURCE_DIR}/bin)
 
-set(SOURCES
-    src/Lumin/Core/Renderer/Camera.cpp
-    src/Lumin/Core/Renderer/Light.cpp
-    src/Lumin/Core/Object/Object.cpp
-    src/Lumin/Core/Object/ObjectsManager.cpp
-    src/Lumin/Core/Renderer/Renderer.cpp
-    src/Lumin/Core/Renderer/Texture.cpp
-    src/Lumin/Core/Shaders/Shaders.cpp
-    src/Lumin/Core/Window/Window.cpp
-    src/Lumin/Core/stb_image_impl.cpp
-)
+file(GLOB_RECURSE CORE_SOURCES src/*.cpp)
 
-# Сначала создаём библиотеку
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+# Create the project library
+add_library(${PROJECT_NAME} STATIC ${CORE_SOURCES})
 
-# Затем устанавливаем include директории
+# Add include directories
 target_include_directories(${PROJECT_NAME} PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
 
+# Add dependencies
 add_subdirectory(dependencies/glfw)
 target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 
@@ -58,7 +53,6 @@ set(IMGUI_SRC
 
 target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SRC})
 
-# Используем относительные пути для ImGui
 target_include_directories(${PROJECT_NAME} PUBLIC 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/dependencies/imgui/backends>

@@ -11,7 +11,6 @@
 
 namespace Lumin {
 namespace Renderer {
-
 Texture::Texture(const std::string& path) {
     glGenTextures(1, &m_ID);
     glBindTexture(GL_TEXTURE_2D, m_ID);
