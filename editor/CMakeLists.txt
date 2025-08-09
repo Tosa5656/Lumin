@@ -44,4 +44,5 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../script_api/include>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../core/dependencies/imgui>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../core/dependencies/imgui/backends>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../core/dependencies/openal/include>
 )

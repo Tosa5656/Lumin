@@ -2,7 +2,7 @@
   _                            _              _____   _                 _   _         
  | |                          (_)            / ____| | |               | | (_)        
  | |       _   _   _ __ ___    _   _ __     | (___   | |_   _   _    __| |  _    ___  
- | |      | | | | | '_  _ \  | | | '_ \     \___ \  | __| | | | |  / _ | | |  / _ \ 
+ | |      | | | | | '_ ` _ \  | | | '_ \     \___ \  | __| | | | |  / _` | | |  / _ \ 
  | |____  | |_| | | | | | | | | | | | | |    ____) | | |_  | |_| | | (_| | | | | (_) |
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
@@ -10,6 +10,11 @@
 #include <iostream>
 #include <Lumin.h>
 #include "Lumin/ScriptAPI/ScriptAPI.h"
+#include "Lumin/Core/Audio/AudioEngine.h"
+#include "Lumin/Core/Audio/SoundBuffer.h"
+#include "Lumin/Core/Audio/SoundSource.h"
+
+#include <cmath>
 
 using namespace Lumin::Object;
 using namespace Lumin::Shaders;
@@ -71,6 +76,21 @@ void Start()
     cameraYaw = glm::degrees(atan2(front.z, front.x));
     cameraPitch = glm::degrees(asin(front.y));
     cameraDistance = glm::length(look - pos);
+
+    if (Lumin::Audio::AudioEngine::Instance().Initialize(nullptr))
+    {
+        static Lumin::Audio::SoundBuffer s_buffer;
+        static Lumin::Audio::SoundSource s_source;
+        if (s_buffer.LoadWav("resources/test_mono.wav"))
+        {
+            s_source.SetBuffer(s_buffer.Id());
+            s_source.SetLooping(true);
+            s_source.SetGain(1.0f);
+            s_source.SetPitch(1.0f);
+            s_source.SetPosition(glm::vec3(0.0f, 0.0f, -1.0f));
+            s_source.Play();
+        }
+    }
 }
 
 void Update()
@@ -82,6 +102,8 @@ void Update()
     glm::vec3 front = glm::normalize(look - pos);
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z)));
     glm::vec3 up = glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z);
+
+    Lumin::Audio::AudioEngine::Instance().SetListener(pos, front, glm::normalize(up));
     if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS)
         pos += front * moveSpeed;
     if (glfwGetKey(g_window, GLFW_KEY_S) == GLFW_PRESS)
@@ -171,18 +193,24 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 
     Lumin::Windowing::Window window(800, 600, "Lumin", Awake, Start);
     g_window = window.GetGLFWwindow();
+    
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     ImGui::StyleColorsDark();
+
     ImGui_ImplGlfw_InitForOpenGL(g_window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
+
     glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetFramebufferSizeCallback(g_window, framebuffer_size_callback);
+
     window.run(Update);
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     if (texture) delete texture;
+
+    Lumin::Audio::AudioEngine::Instance().Shutdown();
     return 0;
 }

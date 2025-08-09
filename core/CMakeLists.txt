@@ -41,6 +41,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 add_subdirectory(dependencies/glm)
 target_link_libraries(${PROJECT_NAME} PUBLIC glm)
 
+add_subdirectory(dependencies/openal)
+target_link_libraries(${PROJECT_NAME} PUBLIC OpenAL)
+
 set(IMGUI_SRC
     dependencies/imgui/imgui.cpp
     dependencies/imgui/imgui_demo.cpp
