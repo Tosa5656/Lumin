@@ -17,6 +17,8 @@ class Camera
 public:
     Camera();
 
+    Lumin::Renderer::RendererCamera* GetRendererCamera();
+
     CameraTransform transform;
 private:
     Lumin::Renderer::RendererCamera* camera;

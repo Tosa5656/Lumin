@@ -27,6 +27,8 @@ public:
                      const glm::vec3& up,
                      const glm::vec3& velocity = {0,0,0});
 
+    void RemoveListener();
+
 private:
     ALCdevice*  m_device = nullptr;
     ALCcontext* m_context = nullptr;

@@ -2,7 +2,7 @@
   _                            _              _____   _                 _   _         
  | |                          (_)            / ____| | |               | | (_)        
  | |       _   _   _ __ ___    _   _ __     | (___   | |_   _   _    __| |  _    ___  
- | |      | | | | | '_  _ \  | | | '_ \     \___ \  | __| | | | |  / _ | | |  / _ \ 
+ | |      | | | | | '_  _ \  | | | '_ \     \___ \  | __| | | | |  / _ | | | |  / _ \ 
  | |____  | |_| | | | | | | | | | | | | |    ____) | | |_  | |_| | | (_| | | | | (_) |
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
@@ -13,4 +13,9 @@ Camera::Camera()
 {
     this->camera = &Lumin::Renderer::camera;
     this->transform = CameraTransform(this->camera);
+}
+
+Lumin::Renderer::RendererCamera* Camera::GetRendererCamera()
+{
+    return camera;
 }

@@ -25,5 +25,11 @@ void SoundSource::SetGain(float gain)   { alSourcef(m_source, AL_GAIN, gain); }
 void SoundSource::SetPitch(float pitch) { alSourcef(m_source, AL_PITCH, pitch); }
 void SoundSource::SetPosition(const glm::vec3& p) { alSource3f(m_source, AL_POSITION, p.x, p.y, p.z); }
 void SoundSource::SetVelocity(const glm::vec3& v) { alSource3f(m_source, AL_VELOCITY, v.x, v.y, v.z); }
+
+bool SoundSource::IsPlaying() const {
+    ALint state;
+    alGetSourcei(m_source, AL_SOURCE_STATE, &state);
+    return state == AL_PLAYING;
+}
 }
 }

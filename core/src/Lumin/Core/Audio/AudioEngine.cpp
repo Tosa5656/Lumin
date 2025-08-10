@@ -43,5 +43,12 @@ void AudioEngine::SetListener(const glm::vec3& pos,
     const float ori[6] = { forward.x, forward.y, forward.z, up.x, up.y, up.z };
     alListenerfv(AL_ORIENTATION, ori);
 }
+
+void AudioEngine::RemoveListener() {
+    alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+    alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
+    float ori[6] = {0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f};
+    alListenerfv(AL_ORIENTATION, ori);
+}
 }
 }

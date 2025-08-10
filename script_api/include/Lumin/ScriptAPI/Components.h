@@ -11,3 +11,4 @@
 
 #include "Lumin/ScriptAPI/Components/Transform.h"
 #include "Lumin/ScriptAPI/Components/CameraTransform.h"
+#include "Lumin/ScriptAPI/Components/AudioListener.h"

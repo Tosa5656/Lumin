@@ -30,6 +30,8 @@ public:
     void SetPitch(float pitch);
     void SetPosition(const glm::vec3& p);
     void SetVelocity(const glm::vec3& v);
+
+    bool IsPlaying() const;
 private:
     ALuint m_source = 0;
 };

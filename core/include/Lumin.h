@@ -22,3 +22,7 @@
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "Lumin/Core/Audio/AudioEngine.h"
+#include "Lumin/Core/Audio/AudioManager.h"
+#include "Lumin/Core/Audio/SoundBuffer.h"
+#include "Lumin/Core/Audio/SoundSource.h"
