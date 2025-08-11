@@ -1,8 +1,12 @@
 #include "Lumin/Core/Audio/AudioManager.h"
+#include <algorithm>
 
 namespace Lumin {
 namespace Audio {
-void AudioManager::PlaySound(const std::string& wavPath, float gain, bool loop) {
+// Define static members
+std::vector<std::unique_ptr<SoundSource>> AudioManager::m_sources;
+std::vector<std::unique_ptr<SoundBuffer>> AudioManager::m_buffers;
+void AudioManager::PlaySound(const std::string& wavPath, float gain, bool loop, glm::vec3 position, glm::vec3 velocity) {
     auto buffer = std::make_unique<SoundBuffer>();
     if (!buffer->LoadWav(wavPath)) return;
 
@@ -10,6 +14,8 @@ void AudioManager::PlaySound(const std::string& wavPath, float gain, bool loop) 
     source->SetBuffer(buffer->Id());
     source->SetGain(gain);
     source->SetLooping(loop);
+    source->SetPosition(position);
+    source->SetVelocity(velocity);
     source->Play();
 
     m_buffers.push_back(std::move(buffer));

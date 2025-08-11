@@ -6,10 +6,6 @@
 Camera AudioListener::rootCamera;
 ListenerTransform AudioListener::transform;
 
-static glm::vec3 ToGlmVec3(const Vector3& v) {
-    return glm::vec3(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
-}
-
 void AudioListener::SetCamera(Camera camera)
 {
     rootCamera = camera;

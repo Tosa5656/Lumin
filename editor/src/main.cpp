@@ -23,7 +23,6 @@ using namespace Lumin::Shaders;
 using namespace Lumin::Windowing;
 using namespace Lumin::Renderer;
 
-AudioListener* audioListener;
 Camera mainCamera = Camera();
 GLFWwindow* g_window = nullptr;
 Lumin::Renderer::Texture* texture = nullptr;
@@ -37,15 +36,15 @@ float cameraDistance = 1.0f;
 float lastX = 400, lastY = 300;
 bool firstMouse = true;
 
-Lumin::Audio::AudioManager g_audioManager;
+AudioClip testClip = AudioClip("resources/test_mono.wav", false, 1.0f, Vector3(0, 0, 0), Vector3(0, 0, 0));
 
 void Awake() 
 {
     Lumin::Audio::AudioEngine::Instance().Initialize(nullptr);
-    audioListener = new AudioListener();
 }
 
-void UpdateCameraLookAtFromAngles() {
+void UpdateCameraLookAtFromAngles() 
+{
     glm::vec3 pos = glm::vec3(mainCamera.transform.GetPosition().x, mainCamera.transform.GetPosition().y, mainCamera.transform.GetPosition().z);
     float yawRad = glm::radians(cameraYaw);
     float pitchRad = glm::radians(cameraPitch);
@@ -97,7 +96,7 @@ void Update()
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z)));
     glm::vec3 up = glm::vec3(mainCamera.transform.GetUp().x, mainCamera.transform.GetUp().y, mainCamera.transform.GetUp().z);
 
-    audioListener->Update();
+    AudioListener::Update();
 
     if (glfwGetKey(g_window, GLFW_KEY_W) == GLFW_PRESS)
         pos += front * moveSpeed;
@@ -167,13 +166,14 @@ void Update()
     static bool spaceWasPressed = false;
     if (glfwGetKey(g_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         if (!spaceWasPressed) {
-            g_audioManager.PlaySound("resources/test.wav");
+            //Lumin::Audio::AudioManager::PlaySound("resources/test_mono.wav", 1.0f, false, glm::vec3(10.0f, 0.0f, 0.0f));
+            testClip.Play();
             spaceWasPressed = true;
         }
     } else {
         spaceWasPressed = false;
     }
-    g_audioManager.Update();
+    Lumin::Audio::AudioManager::Update();
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -216,7 +216,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     if (texture) delete texture;
-    if (audioListener) delete audioListener;
 
     Lumin::Audio::AudioEngine::Instance().Shutdown();
     return 0;

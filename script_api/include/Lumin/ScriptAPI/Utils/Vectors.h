@@ -368,3 +368,7 @@
 		return stream;
 	}
 #pragma endregion
+
+static glm::vec3 ToGlmVec3(const Vector3& v) {
+    return glm::vec3(static_cast<float>(v.x), static_cast<float>(v.y), static_cast<float>(v.z));
+}

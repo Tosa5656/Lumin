@@ -11,13 +11,13 @@ namespace Lumin {
 namespace Audio {
 class AudioManager {
 public:
-    void PlaySound(const std::string& wavPath, float gain = 1.0f, bool loop = false);
-    void Update();
-    void StopAll();
+    static void PlaySound(const std::string& wavPath, float gain, bool loop = false, glm::vec3 position = glm::vec3(0, 0, 0), glm::vec3 velocity = glm::vec3(0, 0, 0));
+    static void Update();
+    static void StopAll();
 
 private:
-    std::vector<std::unique_ptr<SoundSource>> m_sources;
-    std::vector<std::unique_ptr<SoundBuffer>> m_buffers;
+    static std::vector<std::unique_ptr<SoundSource>> m_sources;
+    static std::vector<std::unique_ptr<SoundBuffer>> m_buffers;
 };
 }
 }
