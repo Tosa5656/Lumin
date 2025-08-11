@@ -26,9 +26,6 @@ using namespace Lumin::Renderer;
 Camera mainCamera = Camera();
 GLFWwindow* g_window = nullptr;
 Lumin::Renderer::Texture* texture = nullptr;
-Lumin::Object::ObjectShaderProgram objectSP;
-Lumin::Shaders::ShaderProgram debugShaderProgram;
-Lumin::Shaders::ShaderProgram debugColorShaderProgram;
 
 float cameraYaw = -90.0f;
 float cameraPitch = 0.0f;
@@ -62,17 +59,11 @@ void Start()
     sunLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
     sunLight.intensity = 2.0f;
     sunLight.type = Lumin::Renderer::LightType::Directional;
-    Lumin::Shaders::Shader dbgVert("resources/shaders/debug_color_vertex.glsl", GL_VERTEX_SHADER);
-    Lumin::Shaders::Shader dbgFrag("resources/shaders/debug_color_fragment.glsl", GL_FRAGMENT_SHADER);
-    debugColorShaderProgram = Lumin::Shaders::ShaderProgram(dbgVert, dbgFrag);
-    debugColorShaderProgram.LinkShaders();
-    Lumin::Shaders::Shader vertexShader("resources/shaders/vertex_shader.glsl", GL_VERTEX_SHADER);
-    Lumin::Shaders::Shader fragmentShader("resources/shaders/fragment_shader.glsl", GL_FRAGMENT_SHADER);
-    objectSP = Lumin::Object::ObjectShaderProgram(vertexShader, fragmentShader);
-    debugShaderProgram = Lumin::Shaders::ShaderProgram(vertexShader, fragmentShader);
-    debugShaderProgram.LinkShaders();
+    
+    ShadersManager::InitBasicShaderProgramms();
+
     texture = new Lumin::Renderer::Texture("resources/textures/texture.png");
-    GameObject object = GameObject("test", "resources/model.obj", &objectSP);
+    GameObject object = GameObject("test", "resources/model.obj", &ShadersManager::BasicObjectSP);
     //object->SetTexture(texture);
 
 
@@ -158,7 +149,7 @@ void Update()
     ObjectsManager::DrawObjects();
 #ifndef RELEASE_BUILD
     if (sunLight.enabled)
-        sunLight.DrawDebug(debugColorShaderProgram);
+        sunLight.DrawDebug(ShadersManager::DebugColorShaderProgram);
 #endif
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -166,7 +157,6 @@ void Update()
     static bool spaceWasPressed = false;
     if (glfwGetKey(g_window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         if (!spaceWasPressed) {
-            //Lumin::Audio::AudioManager::PlaySound("resources/test_mono.wav", 1.0f, false, glm::vec3(10.0f, 0.0f, 0.0f));
             testClip.Play();
             spaceWasPressed = true;
         }

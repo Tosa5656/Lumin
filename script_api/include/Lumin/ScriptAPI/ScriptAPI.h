@@ -11,4 +11,4 @@
 
 #include "Lumin/ScriptAPI/Types.h"
 #include "Lumin/ScriptAPI/Components.h"
-#include "Lumin/ScriptAPI/Utils/Vectors.h"
+#include "Lumin/ScriptAPI/Utils.h"
