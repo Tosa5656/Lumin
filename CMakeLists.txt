@@ -145,17 +145,6 @@ if(BUILD_EDITOR AND EXISTS "${CMAKE_SOURCE_DIR}/editor/resources")
     add_dependencies(CopyEditorResources CreateDirectories)
 endif()
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/core/resources")
-    add_custom_target(CopyCoreResources ALL
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_SOURCE_DIR}/bin/resources
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-                ${CMAKE_SOURCE_DIR}/core/resources ${CMAKE_SOURCE_DIR}/bin/resources
-        COMMENT "Copying core resources to bin directory"
-    )
-    add_dependencies(CopyCoreResources CreateDirectories)
-endif()
-
 # Copying dlls for Windows to project templates
 if(WIN32)
     set(WINDOWS_TARGET_PLATFORM "win64" CACHE STRING "Windows target platform (win32 or win64)")
