@@ -8,22 +8,19 @@
                                                                                       
 */
 #include "Lumin/Core/Window/Window.h"
+#include <GLFW/glfw3.h>
+#include <assert.h>
+
 
 namespace Lumin {
 namespace Windowing {
 
-Window::Window(int width, int height, const std::string& title, const std::function<void()>& onAwake, const std::function<void()>& onStart)
+Window::Window(int width, int height, const std::string& title, const std::function<void()> onAwake, const std::function<void()> onStart, std::function<bool()> onFrame)
 {
     this->width = width;
     this->height = height;
     this->title = title;
-
-    if (!glfwInit())
-    {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        window = nullptr;
-        return;
-    }
+    this->onFrame = onFrame;
 
     window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 
@@ -62,25 +59,53 @@ Window::Window(int width, int height, const std::string& title, const std::funct
     onStart();
 }
 
-void Window::run(const std::function<void()>& onFrame)
+void Window::update()
 {
-    if (!window) return;
-    while (!glfwWindowShouldClose(window))
+    if (onFrame)
     {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        if (onFrame) onFrame();
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        if(onFrame() == true)
+            glfwDestroyWindow(window);
     }
-    glfwTerminate();
+}
+
+void Window::SwapBuffers()
+{
+    glfwSwapBuffers(window);
+}
+
+void Window::SetWindowSize(glm::vec2 size)
+{
+    this->width = size.x;
+    this->height = size.y;
+    glfwSetWindowSize(window, size.x, size.y);
+}
+
+void Window::SetWindowTitle(std::string title)
+{
+    this->title = title;
+    glfwSetWindowTitle(window, title.c_str());
+}
+
+glm::vec2 Window::GetWindowSize()
+{
+    return glm::vec2(width, height);
+}
+
+std::string Window::GetWindowTitle()
+{
+    return title;
+}
+
+bool Window::IsClosed()
+{
+    return glfwWindowShouldClose(window);
 }
 
 Window::~Window()
 {
-    if (window)
-        glfwDestroyWindow(window);
+    assert(window);
+    glfwDestroyWindow(window);
+    glfwTerminate();
 }
-
 }
 }

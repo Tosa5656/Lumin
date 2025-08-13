@@ -7,8 +7,8 @@
  |______|  \__,_| |_| |_| |_| |_| |_| |_|   |_____/   \__|  \__,_|  \__,_| |_|  \___/ 
                                                                                       
 */
-#include <iostream>
 #include <Lumin.h>
+#include <iostream>
 #include "Lumin/ScriptAPI/ScriptAPI.h"
 #include "Lumin/Core/Audio/AudioEngine.h"
 #include "Lumin/Core/Audio/SoundBuffer.h"
@@ -77,7 +77,7 @@ void Start()
     cameraDistance = glm::length(look - pos);
 }
 
-void Update()
+bool Update()
 {
     float moveSpeed = 0.1f;
     float lightSpeed = 1.0f;
@@ -113,6 +113,9 @@ void Update()
     if (glfwGetKey(g_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         rot.y -= lightSpeed;
     sunLight.SetRotation(rot);
+
+    if (glfwGetKey(g_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        return true;
 
     double xpos, ypos;
     glfwGetCursorPos(g_window, &xpos, &ypos);
@@ -164,6 +167,7 @@ void Update()
         spaceWasPressed = false;
     }
     Lumin::Audio::AudioManager::Update();
+    return false;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
@@ -187,8 +191,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
         std::cout << "Lumin started in debug mode." << std::endl;
     #endif
 
-    Lumin::Windowing::Window window(800, 600, "Lumin", Awake, Start);
+    if (!glfwInit())
+    {
+        std::cerr << "Failed to initialize GLFW" << std::endl;
+        return 0;
+    }
+
+    Lumin::Windowing::Window window(800, 600, "Lumin", Awake, Start, Update);
     g_window = window.GetGLFWwindow();
+
+    Engine engine = Engine();
+    engine.AddWindow(&window);
     
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -201,7 +214,8 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glfwSetInputMode(g_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetFramebufferSizeCallback(g_window, framebuffer_size_callback);
 
-    window.run(Update);
+    while(engine.Update());
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

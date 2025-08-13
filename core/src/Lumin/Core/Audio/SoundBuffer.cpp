@@ -9,6 +9,9 @@
 */
 
 #define DR_WAV_IMPLEMENTATION
+
+#include <cstdint>
+
 #include "Lumin/Core/Audio/SoundBuffer.h"
 #include "third_party/dr_wav.h"
 

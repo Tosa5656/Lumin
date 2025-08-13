@@ -27,10 +27,20 @@ namespace Windowing {
 class Window
 {
 public:
-    Window(int width, int height, const std::string& title, const std::function<void()>& onAwake, const std::function<void()>& onStart);
+    Window(int width, int height, const std::string& title, const std::function<void()> onAwake, const std::function<void()> onStart, std::function<bool()> onFrame);
     ~Window();
 
-    void run(const std::function<void()>& onFrame);
+    void update();
+
+    void SwapBuffers();
+
+    void SetWindowSize(glm::vec2 size);
+    void SetWindowTitle(std::string title);
+
+    glm::vec2 GetWindowSize();
+    std::string GetWindowTitle();
+
+    bool IsClosed();
     GLFWwindow* GetGLFWwindow() const { return window; }
 
 private:
@@ -38,7 +48,8 @@ private:
     int width;
     int height;
     std::string title;
-};
 
+    std::function<bool()> onFrame;
+};
 }
 }

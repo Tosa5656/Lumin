@@ -12,6 +12,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Lumin/Core/Engine.h"
 #include "Lumin/Core/Window/Window.h"
 #include "Lumin/Core/Renderer/Renderer.h"
 #include "Lumin/Core/Object/Object.h"
